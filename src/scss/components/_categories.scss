@@ -1,0 +1,70 @@
+.category {
+  padding: 0;
+
+  &.planned {
+
+    .category-title {
+      background-color: $default;
+    }
+
+    h4 {
+      color: darken($default, 30%);
+    }
+
+    .badge {
+      background-color: $default;
+    }
+  }
+
+  &.in-progress {
+
+    .category-title {
+      background-color: $warning;
+    }
+
+    h4 {
+      color: darken($warning, 30%);
+    }
+
+    .badge {
+      background-color: $warning;
+    }
+  }
+
+  &.completed {
+
+    .category-title {
+      background-color: $success;
+    }
+
+    h4 {
+      color: darken($success, 30%);
+    }
+
+    .badge {
+      background-color: $success;
+    }
+  }
+
+  .category-title {
+    padding: 15px 0;
+    text-align: center;
+    position: relative;
+
+    h4 {
+      margin: 0;
+    }
+
+  }
+
+  .category-status {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 20px;
+    padding: 0 15px;
+    text-align: center;
+    border-top: 1px solid #e3e3e3;
+  }
+
+}

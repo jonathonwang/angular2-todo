@@ -5814,4 +5814,44 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
+.well {
+  min-height: 50vh;
+  background-color: transparent;
+  border-radius: 2px; }
+
+.category {
+  padding: 0; }
+  .category.planned .category-title {
+    background-color: #b0bec5; }
+  .category.planned h4 {
+    color: #5d747f; }
+  .category.planned .badge {
+    background-color: #b0bec5; }
+  .category.in-progress .category-title {
+    background-color: #fdd835; }
+  .category.in-progress h4 {
+    color: #987c02; }
+  .category.in-progress .badge {
+    background-color: #fdd835; }
+  .category.completed .category-title {
+    background-color: #00bcd4; }
+  .category.completed h4 {
+    color: #00343b; }
+  .category.completed .badge {
+    background-color: #00bcd4; }
+  .category .category-title {
+    padding: 15px 0;
+    text-align: center;
+    position: relative; }
+    .category .category-title h4 {
+      margin: 0; }
+  .category .category-status {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 20px;
+    padding: 0 15px;
+    text-align: center;
+    border-top: 1px solid #e3e3e3; }
+
 /*# sourceMappingURL=app.css.map*/

@@ -57827,6 +57827,8 @@
 	
 	var _app = __webpack_require__(288);
 	
+	var _taskList = __webpack_require__(292);
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
@@ -57842,7 +57844,7 @@
 	    _classCallCheck(this, AppModule);
 	};
 	exports.AppModule = AppModule = __decorate([(0, _core.NgModule)({
-	    declarations: [_app.AppComponent],
+	    declarations: [_app.AppComponent, _taskList.TaskList],
 	    imports: [_platformBrowser.BrowserModule, _forms.FormsModule, _http.HttpModule],
 	    providers: [],
 	    bootstrap: [_app.AppComponent]
@@ -65833,11 +65835,15 @@
 	});
 	exports.AppComponent = undefined;
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _core = __webpack_require__(262);
 	
 	var _app = __webpack_require__(290);
+	
+	var _app2 = __webpack_require__(291);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -65850,16 +65856,47 @@
 	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	
-	var AppComponent = function AppComponent() {
-	    _classCallCheck(this, AppComponent);
+	var AppComponent = function () {
+	    function AppComponent() {
+	        _classCallCheck(this, AppComponent);
 	
-	    this.title = 'Test App';
-	};
+	        this.title = 'Todo App';
+	        this.tasks = [myTask];
+	    }
+	
+	    _createClass(AppComponent, [{
+	        key: "plannedTasks",
+	        value: function plannedTasks() {
+	            return this.taskFilter('planned');
+	        }
+	    }, {
+	        key: "inProgressTasks",
+	        value: function inProgressTasks() {
+	            return this.taskFilter('in-progress');
+	        }
+	    }, {
+	        key: "completedTasks",
+	        value: function completedTasks() {
+	            return this.taskFilter('completed');
+	        }
+	    }, {
+	        key: "taskFilter",
+	        value: function taskFilter(taskStatus) {
+	            return this.tasks.filter(function (task) {
+	                return task.status === taskStatus;
+	            });
+	        }
+	    }]);
+	
+	    return AppComponent;
+	}();
 	exports.AppComponent = AppComponent = __decorate([(0, _core.Component)({
 	    selector: 'app',
 	    template: _app.template
 	})], AppComponent);
 	exports.AppComponent = AppComponent;
+	
+	var myTask = new _app2.Task('test title', 'planned', 'description', 1, 0, new Date(), new Date());
 
 /***/ },
 /* 289 */
@@ -65884,7 +65921,105 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <h1>{{title}}</h1>\n";
+	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <div class=\"col-xs-12\">\n        <h1 class=\"text-center\">{{title}}</h1>\n      </div>\n    </div>\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"plannedTasks()\"></task-list>\n      <task-list [status]=\"'in-progress'\" [tasks]=\"inProgressTasks()\"></task-list>\n      <task-list [status]=\"'completed'\" [tasks]=\"completedTasks()\"></task-list>\n    </div>\n  </div>\n";
+	exports.default = template;
+
+/***/ },
+/* 291 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Task = exports.Task = function () {
+	    function Task(title, status, description, estimate, timeSpent, createdAt, updatedAt) {
+	        _classCallCheck(this, Task);
+	
+	        this.title = title;
+	        this.status = status;
+	        this.description = description;
+	        this.estimate = estimate;
+	        this.timeSpent = timeSpent;
+	        this.createdAt = createdAt;
+	        this.updatedAt = updatedAt;
+	    }
+	
+	    _createClass(Task, [{
+	        key: "calcTimeRemaining",
+	        value: function calcTimeRemaining() {
+	            return this.estimate - this.timeSpent;
+	        }
+	    }, {
+	        key: "timeRemaining",
+	        get: function get() {
+	            return this.calcTimeRemaining;
+	        }
+	    }]);
+	
+	    return Task;
+	}();
+	
+	exports.default = Task;
+
+/***/ },
+/* 292 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.TaskList = undefined;
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _core = __webpack_require__(262);
+	
+	var _taskList = __webpack_require__(293);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+	    var c = arguments.length,
+	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+	        d;
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = undefined && undefined.__metadata || function (k, v) {
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	
+	var TaskList = function TaskList() {
+	    _classCallCheck(this, TaskList);
+	};
+	__decorate([(0, _core.Input)(), __metadata("design:type", String)], TaskList.prototype, "status", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Array)], TaskList.prototype, "tasks", void 0);
+	exports.TaskList = TaskList = __decorate([(0, _core.Component)({
+	    selector: 'task-list',
+	    template: _taskList.template
+	})], TaskList);
+	exports.TaskList = TaskList;
+
+/***/ },
+/* 293 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <h4 class=\"text-capitalize\">{{status}}</h4>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngFor=\"let task of tasks\">\n          {{task.title}}\n        </div>\n      </div>\n      <div class=\"category-status\">\n        <h5>Tasks: <span class=\"badge\">{{tasks.length}}</span></h5>\n        <h5>Total Estimate: <span class=\"badge\">5 hours</span></h5>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ }
