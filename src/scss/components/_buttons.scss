@@ -10,3 +10,17 @@
   font-weight: 700;
   margin-top: -5px;
 }
+
+.btn-default {
+  color: darken($grey, 45%);
+  border: 1px solid darken($grey, 45%);
+  font-weight: 700;
+
+  +.btn-default {
+    margin-right: 5px;
+  }
+}
+
+.badge {
+  background-color: darken($grey, 45%);
+}

@@ -13,11 +13,34 @@ export const template = `
         <div class="task" *ngIf="tasks.length == 0">
           <h5 class="text-center text-capitalize">No {{status}} Tasks Available</h5>
         </div>
+
+
         <ng-container *ngIf="tasks.length > 0">
           <div class="task" *ngFor="let task of tasks">
-            {{task.title}}
+            <div class="task-title">
+              <h5>
+                <strong>{{task.title}}</strong>
+                <button class="btn btn-xs btn-default pull-right">Edit</button>
+                <button class="btn btn-xs btn-default pull-right">Delete</button>
+              </h5>
+            </div>
+            <div class="task-body">
+              <p>{{task.description}}</p>
+            </div>
+            <div class="task-footer">
+              <div class="row">
+                <div class="col-xs-6 text-left">
+                  <p><strong>Estimate:</strong> {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</p>
+                </div>
+                <div class="col-xs-6 text-right">
+                  <p><strong>Logged Work:</strong> {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </ng-container>
+
+
       </div>
       <div class="category-status">
         <div class="row">

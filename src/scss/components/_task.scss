@@ -2,6 +2,12 @@
   background-color: #fff;
   border-radius: 3px;
   padding: 10px 15px;
+  border: 1px solid transparent;
+  transition: .3s ease border-color;
+
+  &:hover {
+    border: 1px solid darken($grey, 45%);
+  }
 
   +.task {
     margin-top: 15px;

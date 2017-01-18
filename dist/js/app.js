@@ -65862,13 +65862,44 @@
 	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	
+	var task1 = new _app2.Task({
+	    id: 1,
+	    title: 'Planned Task',
+	    status: 'planned',
+	    description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+	    estimate: 0,
+	    timeSpent: 0,
+	    createdAt: new Date(),
+	    updatedAt: new Date()
+	});
+	var task2 = new _app2.Task({
+	    id: 2,
+	    title: 'Planned Task',
+	    status: 'in-progress',
+	    description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+	    estimate: 0,
+	    timeSpent: 0,
+	    createdAt: new Date(),
+	    updatedAt: new Date()
+	});
+	var task3 = new _app2.Task({
+	    id: 3,
+	    title: 'Planned Task',
+	    status: 'completed',
+	    description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+	    estimate: 0,
+	    timeSpent: 0,
+	    createdAt: new Date(),
+	    updatedAt: new Date()
+	});
 	var AppComponent = function () {
 	    function AppComponent() {
 	        _classCallCheck(this, AppComponent);
 	
 	        this.title = 'Todo App';
-	        this.tasks = [];
+	        this.tasks = [task1, task2, task3];
 	        this.newTask = {
+	            id: 4,
 	            title: '',
 	            status: 'planned',
 	            description: '',
@@ -65928,6 +65959,7 @@
 	        key: "resetNewTaskFields",
 	        value: function resetNewTaskFields() {
 	            this.newTask = {
+	                id: this.newTask.id + 1,
 	                title: '',
 	                status: 'planned',
 	                description: '',
@@ -66083,7 +66115,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize\">{{status}}</h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">+</button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            {{task.title}}\n          </div>\n        </ng-container>\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h5 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge\">{{tasks.length}}</span>\n            </h5>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h5>Total Estimate: <span class=\"badge\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span></h5>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize\">{{status}}</h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">+</button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title\">\n              <h5>\n                <strong>{{task.title}}</strong>\n                <button class=\"btn btn-xs btn-default pull-right\">Edit</button>\n                <button class=\"btn btn-xs btn-default pull-right\">Delete</button>\n              </h5>\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><strong>Estimate:</strong> {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><strong>Logged Work:</strong> {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h5 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge\">{{tasks.length}}</span>\n            </h5>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h5>Total Estimate: <span class=\"badge\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span></h5>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ },

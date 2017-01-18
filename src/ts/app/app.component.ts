@@ -9,6 +9,37 @@ import { IAppComponent, ITask } from './app.interface';
 // Child Components
 import { TaskList } from './task-list/task-list.component';
 
+const task1 = new Task ({
+  id: 1,
+  title: 'Planned Task',
+  status: 'planned',
+  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+  estimate: 0,
+  timeSpent: 0,
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+const task2 = new Task ({
+  id: 2,
+  title: 'Planned Task',
+  status: 'in-progress',
+  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+  estimate: 0,
+  timeSpent: 0,
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+const task3 = new Task ({
+  id: 3,
+  title: 'Planned Task',
+  status: 'completed',
+  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
+  estimate: 0,
+  timeSpent: 0,
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
 @Component({
   selector: 'app',
   template
@@ -17,9 +48,10 @@ import { TaskList } from './task-list/task-list.component';
 export class AppComponent implements IAppComponent {
   // State
   title: string = 'Todo App';
-  tasks: Array<Task> = [];
+  tasks: Array<Task> = [task1, task2, task3];
   // !!!!!! I need an interface here
   newTask = {
+    id: 4,
     title: '',
     status: 'planned',
     description: '',
@@ -64,6 +96,7 @@ export class AppComponent implements IAppComponent {
   }
   resetNewTaskFields(): void {
     this.newTask = {
+      id: this.newTask.id + 1,
       title: '',
       status: 'planned',
       description: '',

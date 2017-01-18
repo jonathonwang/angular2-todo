@@ -1,13 +1,14 @@
 import { ITask } from './app.interface';
 
 export class Task implements ITask {
-  public title;
-  public status;
-  public description;
-  public estimate;
-  public timeSpent;
-  public createdAt;
-  public updatedAt;
+  id: number;
+  title: string;
+  status: string;
+  description: string;
+  estimate: number;
+  timeSpent: number;
+  createdAt: Date;
+  updatedAt: Date;
   constructor(taskConstructor: ITask) {
     this.title = taskConstructor.title;
     this.status = taskConstructor.status;

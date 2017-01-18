@@ -5831,6 +5831,16 @@ body {
   font-weight: 700;
   margin-top: -5px; }
 
+.btn-default {
+  color: #4677a4;
+  border: 1px solid #4677a4;
+  font-weight: 700; }
+  .btn-default + .btn-default {
+    margin-right: 5px; }
+
+.badge {
+  background-color: #4677a4; }
+
 .category {
   min-height: 220px;
   padding: 0;
@@ -5854,12 +5864,16 @@ body {
     text-align: center;
     border-top: 2px solid #c5d7e6; }
   .category .category-body {
-    padding: 15px; }
+    padding: 20px 15px 70px; }
 
 .task {
   background-color: #fff;
   border-radius: 3px;
-  padding: 10px 15px; }
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  transition: .3s ease border-color; }
+  .task:hover {
+    border: 1px solid #4677a4; }
   .task + .task {
     margin-top: 15px; }
 
