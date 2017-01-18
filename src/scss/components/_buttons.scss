@@ -9,6 +9,31 @@
   border: 2px solid darken($grey, 45%);
   font-weight: 700;
   margin-top: -5px;
+  overflow: hidden;
+  transition: .2s ease all;
+
+  .plus-text {
+    margin-left: 3px;
+  }
+
+  .create-text {
+    width: 0;
+    overflow: hidden;
+    margin: 0 0 0 5px;
+    opacity: 0;
+    transition: .2s ease all;
+  }
+
+  &:hover {
+    width: 90px;
+    color: darken($grey, 55%);
+    border: 1px solid darken($grey, 55%);
+    background-color: transparent;
+    .create-text {
+      width: auto;
+      opacity: 1;
+    }
+  }
 }
 
 .btn-default {

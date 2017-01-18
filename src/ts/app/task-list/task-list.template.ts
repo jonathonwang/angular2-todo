@@ -6,7 +6,10 @@ export const template = `
           <h4 class="text-capitalize">{{status}}</h4>
         </div>
         <div class="col-xs-6">
-          <button (click)="openModal(status)" class="btn btn-xs btn-rounded btn-create btn-default pull-right">+</button>
+          <button (click)="openModal(status)" class="btn btn-xs btn-rounded btn-create btn-default pull-right">
+          <span class="plus-text">+</span>
+          <span class="create-text"> Create Task</span>
+          </button>
         </div>
       </div>
       <div class="category-body">
