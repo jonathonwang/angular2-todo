@@ -1,55 +1,18 @@
 .category {
+  min-height: 220px;
   padding: 0;
+  background-color: $grey;
+  border-radius: 2px;
+  box-shadow: 1px 3px 22px darken($grey, 15%);
+  transition: .3s ease-in-out background-color;
 
-  &.planned {
-
-    .category-title {
-      background-color: $default;
-    }
-
-    h4 {
-      color: darken($default, 30%);
-    }
-
-    .badge {
-      background-color: $default;
-    }
-  }
-
-  &.in-progress {
-
-    .category-title {
-      background-color: $warning;
-    }
-
-    h4 {
-      color: darken($warning, 30%);
-    }
-
-    .badge {
-      background-color: $warning;
-    }
-  }
-
-  &.completed {
-
-    .category-title {
-      background-color: $success;
-    }
-
-    h4 {
-      color: darken($success, 30%);
-    }
-
-    .badge {
-      background-color: $success;
-    }
+  &:hover {
+    background-color: lighten($grey, 4%);
   }
 
   .category-title {
-    padding: 15px 0;
-    text-align: center;
     position: relative;
+    padding: 15px 0;
 
     h4 {
       margin: 0;
@@ -64,7 +27,11 @@
     bottom: 20px;
     padding: 0 15px;
     text-align: center;
-    border-top: 1px solid #e3e3e3;
+    border-top: 2px solid darken($grey, 7%);
+  }
+
+  .category-body {
+    padding: 15px;
   }
 
 }

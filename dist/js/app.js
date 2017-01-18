@@ -56,7 +56,7 @@
 	
 	var _app = __webpack_require__(282);
 	
-	var _env = __webpack_require__(289);
+	var _env = __webpack_require__(297);
 	
 	if (_env.env.production === false) {
 	    (0, _core.enableProdMode)();
@@ -57827,7 +57827,13 @@
 	
 	var _app = __webpack_require__(288);
 	
-	var _taskList = __webpack_require__(292);
+	var _taskList = __webpack_require__(291);
+	
+	var _createModal = __webpack_require__(293);
+	
+	var _alert = __webpack_require__(295);
+	
+	var _navbar = __webpack_require__(298);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -57844,7 +57850,7 @@
 	    _classCallCheck(this, AppModule);
 	};
 	exports.AppModule = AppModule = __decorate([(0, _core.NgModule)({
-	    declarations: [_app.AppComponent, _taskList.TaskList],
+	    declarations: [_app.AppComponent, _taskList.TaskList, _createModal.CreateModal, _alert.Alert, _navbar.Navbar],
 	    imports: [_platformBrowser.BrowserModule, _forms.FormsModule, _http.HttpModule],
 	    providers: [],
 	    bootstrap: [_app.AppComponent]
@@ -65841,9 +65847,9 @@
 	
 	var _core = __webpack_require__(262);
 	
-	var _app = __webpack_require__(290);
+	var _app = __webpack_require__(289);
 	
-	var _app2 = __webpack_require__(291);
+	var _app2 = __webpack_require__(290);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -65861,30 +65867,87 @@
 	        _classCallCheck(this, AppComponent);
 	
 	        this.title = 'Todo App';
-	        this.tasks = [myTask];
+	        this.tasks = [];
+	        this.newTask = {
+	            title: '',
+	            status: 'planned',
+	            description: '',
+	            estimate: 0,
+	            timeSpent: 0,
+	            createdAt: Date,
+	            updatedAt: Date
+	        };
+	        this.alert = {
+	            status: '',
+	            message: '',
+	            visible: false
+	        };
+	        this.isModalOpen = false;
 	    }
 	
 	    _createClass(AppComponent, [{
-	        key: "plannedTasks",
-	        value: function plannedTasks() {
-	            return this.taskFilter('planned');
-	        }
-	    }, {
-	        key: "inProgressTasks",
-	        value: function inProgressTasks() {
-	            return this.taskFilter('in-progress');
-	        }
-	    }, {
-	        key: "completedTasks",
-	        value: function completedTasks() {
-	            return this.taskFilter('completed');
-	        }
-	    }, {
 	        key: "taskFilter",
 	        value: function taskFilter(taskStatus) {
 	            return this.tasks.filter(function (task) {
 	                return task.status === taskStatus;
 	            });
+	        }
+	    }, {
+	        key: "totalEstimate",
+	        value: function totalEstimate(taskStatus) {
+	            var total = 0;
+	            this.tasks.filter(function (task) {
+	                return task.status === taskStatus;
+	            }).map(function (task) {
+	                total += task.estimate;
+	            });
+	            return total;
+	        }
+	    }, {
+	        key: "toggleTaskModal",
+	        value: function toggleTaskModal(status) {
+	            if (status !== undefined) {
+	                this.newTask.status = status;
+	            }
+	            this.isModalOpen = !this.isModalOpen;
+	        }
+	    }, {
+	        key: "createTask",
+	        value: function createTask(taskData) {
+	            if (taskData.title.length > 0) {
+	                var newTask = new _app2.Task(taskData);
+	                this.tasks.push(newTask);
+	                this.resetNewTaskFields();
+	                this.toggleTaskModal('');
+	                this.showAlert('success', 'Task Successfully Created');
+	            } else {
+	                this.showAlert('danger', 'Task Title is Required');
+	            }
+	        }
+	    }, {
+	        key: "resetNewTaskFields",
+	        value: function resetNewTaskFields() {
+	            this.newTask = {
+	                title: '',
+	                status: 'planned',
+	                description: '',
+	                estimate: 0,
+	                timeSpent: 0,
+	                createdAt: Date,
+	                updatedAt: Date
+	            };
+	        }
+	    }, {
+	        key: "showAlert",
+	        value: function showAlert(status, message) {
+	            this.alert.visible = true;
+	            this.alert.status = status;
+	            this.alert.message = message;
+	        }
+	    }, {
+	        key: "closeAlert",
+	        value: function closeAlert() {
+	            this.alert.visible = false;
 	        }
 	    }]);
 	
@@ -65895,8 +65958,6 @@
 	    template: _app.template
 	})], AppComponent);
 	exports.AppComponent = AppComponent;
-	
-	var myTask = new _app2.Task('test title', 'planned', 'description', 1, 0, new Date(), new Date());
 
 /***/ },
 /* 289 */
@@ -65905,27 +65966,13 @@
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var env = exports.env = {
-	    production: false
-	};
-	exports.default = env;
-
-/***/ },
-/* 290 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <div class=\"col-xs-12\">\n        <h1 class=\"text-center\">{{title}}</h1>\n      </div>\n    </div>\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"plannedTasks()\"></task-list>\n      <task-list [status]=\"'in-progress'\" [tasks]=\"inProgressTasks()\"></task-list>\n      <task-list [status]=\"'completed'\" [tasks]=\"completedTasks()\"></task-list>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <navbar [title]=\"title\" (modalOpened)=\"toggleTaskModal()\"></navbar>\n\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"taskFilter('planned')\" [totalEstimate]=\"totalEstimate('planned')\" (modalWasOpened)=\"toggleTaskModal('planned')\"></task-list>\n      <task-list [status]=\"'in-progress'\" [tasks]=\"taskFilter('in-progress')\" [totalEstimate]=\"totalEstimate('in-progress')\" (modalWasOpened)=\"toggleTaskModal('in-progress')\"></task-list>\n      <task-list [status]=\"'completed'\" [tasks]=\"taskFilter('completed')\" (modalWasOpened)=\"toggleTaskModal('completed')\" [totalEstimate]=\"totalEstimate('completed')\"></task-list>\n    </div>\n  </div>\n\n  <create-modal [isModalOpen]=\"isModalOpen\" [newTask]=\"newTask\" (formSubmitted)=\"createTask(newTask)\" (modalClosed)=\"toggleTaskModal();\"></create-modal>\n\n  <alert [visible]=\"alert.visible\" [status]=\"alert.status\" [message]=\"alert.message\" (alertClosed)=\"closeAlert()\"></alert>\n";
 	exports.default = template;
 
 /***/ },
-/* 291 */
+/* 290 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -65939,16 +65986,16 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Task = exports.Task = function () {
-	    function Task(title, status, description, estimate, timeSpent, createdAt, updatedAt) {
+	    function Task(taskConstructor) {
 	        _classCallCheck(this, Task);
 	
-	        this.title = title;
-	        this.status = status;
-	        this.description = description;
-	        this.estimate = estimate;
-	        this.timeSpent = timeSpent;
-	        this.createdAt = createdAt;
-	        this.updatedAt = updatedAt;
+	        this.title = taskConstructor.title;
+	        this.status = taskConstructor.status;
+	        this.description = taskConstructor.description;
+	        this.estimate = taskConstructor.estimate;
+	        this.timeSpent = taskConstructor.timeSpent;
+	        this.createdAt = taskConstructor.createdAt;
+	        this.updatedAt = taskConstructor.updatedAt;
 	    }
 	
 	    _createClass(Task, [{
@@ -65969,7 +66016,7 @@
 	exports.default = Task;
 
 /***/ },
-/* 292 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -65979,11 +66026,13 @@
 	});
 	exports.TaskList = undefined;
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _core = __webpack_require__(262);
 	
-	var _taskList = __webpack_require__(293);
+	var _taskList = __webpack_require__(292);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -65999,11 +66048,26 @@
 	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	
-	var TaskList = function TaskList() {
-	    _classCallCheck(this, TaskList);
-	};
+	var TaskList = function () {
+	    function TaskList() {
+	        _classCallCheck(this, TaskList);
+	
+	        this.modalWasOpened = new _core.EventEmitter();
+	    }
+	
+	    _createClass(TaskList, [{
+	        key: "openModal",
+	        value: function openModal(status) {
+	            this.modalWasOpened.emit(status);
+	        }
+	    }]);
+	
+	    return TaskList;
+	}();
 	__decorate([(0, _core.Input)(), __metadata("design:type", String)], TaskList.prototype, "status", void 0);
 	__decorate([(0, _core.Input)(), __metadata("design:type", Array)], TaskList.prototype, "tasks", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], TaskList.prototype, "totalEstimate", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "modalWasOpened", void 0);
 	exports.TaskList = TaskList = __decorate([(0, _core.Component)({
 	    selector: 'task-list',
 	    template: _taskList.template
@@ -66011,7 +66075,7 @@
 	exports.TaskList = TaskList;
 
 /***/ },
-/* 293 */
+/* 292 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -66019,7 +66083,246 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <h4 class=\"text-capitalize\">{{status}}</h4>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngFor=\"let task of tasks\">\n          {{task.title}}\n        </div>\n      </div>\n      <div class=\"category-status\">\n        <h5>Tasks: <span class=\"badge\">{{tasks.length}}</span></h5>\n        <h5>Total Estimate: <span class=\"badge\">5 hours</span></h5>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize\">{{status}}</h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">+</button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            {{task.title}}\n          </div>\n        </ng-container>\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h5 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge\">{{tasks.length}}</span>\n            </h5>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h5>Total Estimate: <span class=\"badge\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span></h5>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+	exports.default = template;
+
+/***/ },
+/* 293 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.CreateModal = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _core = __webpack_require__(262);
+	
+	var _createModal = __webpack_require__(294);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+	    var c = arguments.length,
+	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+	        d;
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = undefined && undefined.__metadata || function (k, v) {
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	
+	var CreateModal = function () {
+	    function CreateModal() {
+	        _classCallCheck(this, CreateModal);
+	
+	        this.formSubmitted = new _core.EventEmitter();
+	        this.modalClosed = new _core.EventEmitter();
+	    }
+	
+	    _createClass(CreateModal, [{
+	        key: "submitTaskForm",
+	        value: function submitTaskForm(e) {
+	            e.preventDefault();
+	            var taskData = Object.assign({}, this.newTask);
+	            taskData.createdAt = new Date();
+	            taskData.updatedAt = new Date();
+	            this.formSubmitted.emit(taskData);
+	        }
+	    }, {
+	        key: "closeModal",
+	        value: function closeModal(e) {
+	            e.preventDefault();
+	            this.modalClosed.emit();
+	        }
+	    }]);
+	
+	    return CreateModal;
+	}();
+	__decorate([(0, _core.Input)(), __metadata("design:type", Boolean)], CreateModal.prototype, "isModalOpen", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Object)], CreateModal.prototype, "newTask", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Function)], CreateModal.prototype, "createTask", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], CreateModal.prototype, "formSubmitted", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], CreateModal.prototype, "modalClosed", void 0);
+	exports.CreateModal = CreateModal = __decorate([(0, _core.Component)({
+	    selector: 'create-modal',
+	    template: _createModal.template
+	})], CreateModal);
+	exports.CreateModal = CreateModal;
+	exports.default = CreateModal;
+
+/***/ },
+/* 294 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var template = exports.template = "\n<div class=\"modal fade\" [class.in]=\"isModalOpen\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title text-center\">Create Task</h4>\n      </div>\n      <div class=\"modal-body\">\n        <!-- Begin Form -->\n          <form (ngSubmit)=\"submitTaskForm($event)\" #createTaskForm=\"ngForm\">\n            <div class=\"form-group\">\n              <label for=\"title\">Title:</label>\n              <input name=\"title\" type=\"text\" [(ngModel)]=\"newTask.title\" class=\"form-control\" placeholder=\"Task Title\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"status\">Status:</label>\n              <select name=\"status\" [(ngModel)]=\"newTask.status\" required>\n                <option value=\"planned\">Planned</option>\n                <option value=\"in-progress\">In-Progress</option>\n                <option value=\"completed\">Completed</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"description\">Description:</label>\n              <textarea name=\"description\" [(ngModel)]=\"newTask.description\" class=\"form-control\" placeholder=\"Description\" rows=\"5\"></textarea>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"estimate\">Time Estimate:</label>\n              <input name=\"estimate\" type=\"text\" [(ngModel)]=\"newTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 50\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"timeSpent\">Time Spent:</label>\n              <input name=\"timeSpent\" type=\"text\" [(ngModel)]=\"newTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 10\">\n            </div>\n          </form>\n        <!-- End Form -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"btn btn-default\">Close</button>\n        <button type=\"button\" (click)=\"submitTaskForm($event)\" class=\"btn btn-primary\">Submit</button>\n      </div>\n    </div><!-- /.modal-content -->\n  </div><!-- /.modal-dialog -->\n</div><!-- /.modal -->\n";
+	exports.default = template;
+
+/***/ },
+/* 295 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Alert = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _core = __webpack_require__(262);
+	
+	var _alert = __webpack_require__(296);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+	    var c = arguments.length,
+	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+	        d;
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = undefined && undefined.__metadata || function (k, v) {
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	
+	var Alert = function () {
+	    function Alert() {
+	        _classCallCheck(this, Alert);
+	
+	        this.alertClosed = new _core.EventEmitter();
+	    }
+	
+	    _createClass(Alert, [{
+	        key: "closeAlert",
+	        value: function closeAlert(e) {
+	            e.preventDefault();
+	            this.alertClosed.emit();
+	        }
+	    }]);
+	
+	    return Alert;
+	}();
+	__decorate([(0, _core.Input)(), __metadata("design:type", String)], Alert.prototype, "status", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", String)], Alert.prototype, "message", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Boolean)], Alert.prototype, "visible", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], Alert.prototype, "alertClosed", void 0);
+	exports.Alert = Alert = __decorate([(0, _core.Component)({
+	    selector: 'alert',
+	    template: _alert.template
+	})], Alert);
+	exports.Alert = Alert;
+
+/***/ },
+/* 296 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var template = exports.template = "\n  <div class=\"alert alert-{{status}} alert-dismissible text-center\" [class.show]=\"visible\" role=\"alert\">\n    <button type=\"button\" class=\"close\" (click)=\"closeAlert($event)\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n    <span class=\"alert-message\"><strong class=\"text-capitalize\">{{status}}!</strong> {{message}}</span>\n  </div>\n";
+	exports.default = template;
+
+/***/ },
+/* 297 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var env = exports.env = {
+	    production: false
+	};
+	exports.default = env;
+
+/***/ },
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Navbar = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _core = __webpack_require__(262);
+	
+	var _navbar = __webpack_require__(299);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+	    var c = arguments.length,
+	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+	        d;
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = undefined && undefined.__metadata || function (k, v) {
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	
+	var Navbar = function () {
+	    function Navbar() {
+	        _classCallCheck(this, Navbar);
+	
+	        this.modalOpened = new _core.EventEmitter();
+	    }
+	
+	    _createClass(Navbar, [{
+	        key: "modalWasOpened",
+	        value: function modalWasOpened() {
+	            this.modalOpened.emit();
+	        }
+	    }]);
+	
+	    return Navbar;
+	}();
+	__decorate([(0, _core.Input)(), __metadata("design:type", String)], Navbar.prototype, "title", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], Navbar.prototype, "modalOpened", void 0);
+	exports.Navbar = Navbar = __decorate([(0, _core.Component)({
+	    selector: 'navbar',
+	    template: _navbar.template
+	})], Navbar);
+	exports.Navbar = Navbar;
+
+/***/ },
+/* 299 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"navbar row\">\n      <div class=\"col-lg-6\">\n        <h1>{{title}}</h1>\n      </div>\n      <div class=\"col-lg-6\">\n        <button class=\"btn btn-primary pull-right\" (click)=\"modalWasOpened()\">\n        Create Task\n        </button>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ }

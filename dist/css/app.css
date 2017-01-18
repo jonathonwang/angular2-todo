@@ -1,4 +1,4 @@
-@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700);@charset "UTF-8";
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -5814,35 +5814,35 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
-.well {
-  min-height: 50vh;
+body {
+  font-family: "Lato", "Helvetica Neue", "Helvetica", arial, sans-serif;
+  background-color: #dee8f1;
+  color: #4677a4; }
+
+.btn-rounded {
+  border-radius: 100px; }
+
+.btn-create {
+  width: 25px;
+  height: 25px;
   background-color: transparent;
-  border-radius: 2px; }
+  color: #4677a4;
+  border: 2px solid #4677a4;
+  font-weight: 700;
+  margin-top: -5px; }
 
 .category {
-  padding: 0; }
-  .category.planned .category-title {
-    background-color: #b0bec5; }
-  .category.planned h4 {
-    color: #5d747f; }
-  .category.planned .badge {
-    background-color: #b0bec5; }
-  .category.in-progress .category-title {
-    background-color: #fdd835; }
-  .category.in-progress h4 {
-    color: #987c02; }
-  .category.in-progress .badge {
-    background-color: #fdd835; }
-  .category.completed .category-title {
-    background-color: #00bcd4; }
-  .category.completed h4 {
-    color: #00343b; }
-  .category.completed .badge {
-    background-color: #00bcd4; }
+  min-height: 220px;
+  padding: 0;
+  background-color: #dee8f1;
+  border-radius: 2px;
+  box-shadow: 1px 3px 22px #a8c3da;
+  transition: .3s ease-in-out background-color; }
+  .category:hover {
+    background-color: #ecf2f7; }
   .category .category-title {
-    padding: 15px 0;
-    text-align: center;
-    position: relative; }
+    position: relative;
+    padding: 15px 0; }
     .category .category-title h4 {
       margin: 0; }
   .category .category-status {
@@ -5852,6 +5852,53 @@ button.close {
     bottom: 20px;
     padding: 0 15px;
     text-align: center;
-    border-top: 1px solid #e3e3e3; }
+    border-top: 2px solid #c5d7e6; }
+  .category .category-body {
+    padding: 15px; }
+
+.task {
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 10px 15px; }
+  .task + .task {
+    margin-top: 15px; }
+
+.modal {
+  display: block;
+  visibility: hidden;
+  opacity: 0; }
+  .modal.fade {
+    transition: .4s ease all; }
+  .modal.in {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.5); }
+
+.alert {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 50px;
+  height: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+  z-index: 10000;
+  transition: .4s ease-in-out all; }
+  .alert .alert-message {
+    font-size: 16px; }
+  .alert.show {
+    height: auto;
+    padding: 15px 50px; }
+
+.navbar {
+  padding: 10px 0;
+  background-color: white; }
+  .navbar h1 {
+    margin: 7px 0 0;
+    font-size: 18px;
+    font-weight: 700; }
 
 /*# sourceMappingURL=app.css.map*/

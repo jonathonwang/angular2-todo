@@ -1,0 +1,12 @@
+.btn-rounded {
+  border-radius: 100px;
+}
+.btn-create {
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+  color: darken($grey, 45%);
+  border: 2px solid darken($grey, 45%);
+  font-weight: 700;
+  margin-top: -5px;
+}

@@ -1,0 +1,17 @@
+.modal {
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+
+  &.fade {
+    transition: .4s ease all;
+  }
+
+  &.in {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    z-index: 100;
+    background-color: rgba(0,0,0,.5);
+  }
+}

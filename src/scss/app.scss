@@ -1,9 +1,12 @@
 $bootstrap-sass-asset-helper: true;
 @import '~bootstrap-sass/assets/stylesheets/bootstrap';
 
+@import 'variables';
 @import 'base';
 // Component Imports
-@import 'variables';
-@import 'components/wells';
+@import 'components/buttons';
 @import 'components/categories';
 @import 'components/task';
+@import 'components/modal';
+@import 'components/alert';
+@import 'components/navbar';

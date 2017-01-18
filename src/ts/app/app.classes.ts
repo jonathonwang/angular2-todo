@@ -8,20 +8,20 @@ export class Task implements ITask {
   public timeSpent;
   public createdAt;
   public updatedAt;
-  constructor(title, status, description, estimate, timeSpent, createdAt, updatedAt) {
-    this.title = title;
-    this.status = status;
-    this.description = description;
-    this.estimate = estimate;
-    this.timeSpent = timeSpent;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+  constructor(taskConstructor: ITask) {
+    this.title = taskConstructor.title;
+    this.status = taskConstructor.status;
+    this.description = taskConstructor.description;
+    this.estimate = taskConstructor.estimate;
+    this.timeSpent = taskConstructor.timeSpent;
+    this.createdAt = taskConstructor.createdAt;
+    this.updatedAt = taskConstructor.updatedAt;
   }
 
-  get timeRemaining() {
+  get timeRemaining(): Function {
     return this.calcTimeRemaining;
   }
-  private calcTimeRemaining() {
+  private calcTimeRemaining(): number {
     return this.estimate - this.timeSpent;
   }
 }
