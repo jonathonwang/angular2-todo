@@ -1,21 +1,63 @@
 .category {
   min-height: 220px;
+  max-height: calc(100vh - 74px);
+  overflow-y: scroll;
   padding: 0;
-  background-color: $grey;
-  border-radius: 2px;
-  box-shadow: 1px 3px 22px darken($grey, 15%);
-  transition: .3s ease-in-out background-color;
+  background-color: lighten($light-grey, 10%);
+  border-radius: 3px;
+  box-shadow: 0px 0px 10px darken($light-grey, 10%);
+  transition: .3s ease-in-out box-shadow;
 
   &:hover {
-    background-color: lighten($grey, 4%);
+    box-shadow: 0px 0px 20px darken($light-grey, 20%);
   }
 
   .category-title {
     position: relative;
-    padding: 15px 0;
+    padding: 25px 0;
 
     h4 {
+      position: relative;
       margin: 0;
+      font-weight: 400;
+
+      &:before {
+        position: absolute;
+        left: 19px;
+        bottom: -5px;
+        width: 20px;
+        height: 2px;
+        content: ' ';
+      }
+      &.planned {
+        &:before {
+          background-color: $warning;
+        }
+      }
+      &.in-progress {
+        &:before {
+          background-color: $default;
+        }
+      }
+      &.completed {
+        &:before {
+          background-color: $success;
+        }
+      }
+
+      span {
+        font-size: 15px;
+
+        &.fa-circle-o {
+          color: $warning;
+        }
+        &.fa-check-circle-o {
+          color: $success;
+        }
+        &.fa-dot-circle-o {
+          color: $default;
+        }
+      }
     }
 
   }
@@ -27,7 +69,7 @@
     bottom: 20px;
     padding: 0 15px;
     text-align: center;
-    border-top: 2px solid darken($grey, 7%);
+    // border-top: 2px solid darken($grey, 7%);
   }
 
   .category-body {

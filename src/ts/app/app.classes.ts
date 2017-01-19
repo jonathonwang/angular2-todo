@@ -10,6 +10,7 @@ export class Task implements ITask {
   createdAt: Date;
   updatedAt: Date;
   constructor(taskConstructor: ITask) {
+    this.id = taskConstructor.id;
     this.title = taskConstructor.title;
     this.status = taskConstructor.status;
     this.description = taskConstructor.description;

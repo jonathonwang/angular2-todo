@@ -1,0 +1,14 @@
+.dropdown-menu {
+  padding: 0;
+  font-size: 12px;
+
+  li {
+    a {
+      padding: 8px 10px;
+    }
+
+    &.divider {
+      margin: 0;
+    }
+  }
+}

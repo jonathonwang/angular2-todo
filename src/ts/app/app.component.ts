@@ -65,6 +65,7 @@ export class AppComponent implements IAppComponent {
     message: '',
     visible: false
   };
+  activeDropdown: number = -1;
   // Methods
   isModalOpen: boolean = false;
   taskFilter(taskStatus: string): Array<Task> {
@@ -106,12 +107,19 @@ export class AppComponent implements IAppComponent {
       updatedAt: Date
     };
   }
-  showAlert(status: string, message: string) {
+  showAlert(status: string, message: string): void {
     this.alert.visible = true;
     this.alert.status = status;
     this.alert.message = message;
   }
-  closeAlert() {
+  closeAlert(): void {
     this.alert.visible = false;
+  }
+  toggleDropdown(taskId: number): void {
+    if (this.activeDropdown !== taskId) {
+      this.activeDropdown = taskId;
+    } else {
+      this.activeDropdown = -1;
+    }
   }
 }

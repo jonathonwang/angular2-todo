@@ -2,11 +2,11 @@
   background-color: #fff;
   border-radius: 3px;
   padding: 10px 15px;
-  border: 1px solid transparent;
+  border: 1px solid lighten($secondary-font-color, 50%);
   transition: .3s ease border-color;
 
   &:hover {
-    border: 1px solid darken($grey, 45%);
+    border: 1px solid lighten($secondary-font-color, 30%);
   }
 
   +.task {
@@ -15,6 +15,32 @@
 
   .task-title {
     padding-bottom: 5px;
+    color: $secondary-font-color;
+    position: relative;
+
+    &:before {
+      content: ' ';
+      position: absolute;
+      left: -16px;
+      top: -2px;
+      height: 20px;
+      width: 1px;
+    }
+    &.planned {
+      &:before {
+        background-color: $warning;
+      }
+    }
+    &.in-progress {
+      &:before {
+        background-color: $default;
+      }
+    }
+    &.completed {
+      &:before {
+        background-color: $success;
+      }
+    }
 
     .btn {
       margin-top: -5px;

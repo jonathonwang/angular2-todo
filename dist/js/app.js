@@ -56,7 +56,7 @@
 	
 	var _app = __webpack_require__(282);
 	
-	var _env = __webpack_require__(297);
+	var _env = __webpack_require__(299);
 	
 	if (_env.env.production === false) {
 	    (0, _core.enableProdMode)();
@@ -57833,7 +57833,7 @@
 	
 	var _alert = __webpack_require__(295);
 	
-	var _navbar = __webpack_require__(298);
+	var _navbar = __webpack_require__(297);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -65913,6 +65913,7 @@
 	            message: '',
 	            visible: false
 	        };
+	        this.activeDropdown = -1;
 	        this.isModalOpen = false;
 	    }
 	
@@ -65981,6 +65982,15 @@
 	        value: function closeAlert() {
 	            this.alert.visible = false;
 	        }
+	    }, {
+	        key: "toggleDropdown",
+	        value: function toggleDropdown(taskId) {
+	            if (this.activeDropdown !== taskId) {
+	                this.activeDropdown = taskId;
+	            } else {
+	                this.activeDropdown = -1;
+	            }
+	        }
 	    }]);
 	
 	    return AppComponent;
@@ -66000,7 +66010,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <navbar [title]=\"title\" (modalOpened)=\"toggleTaskModal()\"></navbar>\n\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"taskFilter('planned')\" [totalEstimate]=\"totalEstimate('planned')\" (modalWasOpened)=\"toggleTaskModal('planned')\"></task-list>\n      <task-list [status]=\"'in-progress'\" [tasks]=\"taskFilter('in-progress')\" [totalEstimate]=\"totalEstimate('in-progress')\" (modalWasOpened)=\"toggleTaskModal('in-progress')\"></task-list>\n      <task-list [status]=\"'completed'\" [tasks]=\"taskFilter('completed')\" (modalWasOpened)=\"toggleTaskModal('completed')\" [totalEstimate]=\"totalEstimate('completed')\"></task-list>\n    </div>\n  </div>\n\n  <create-modal [isModalOpen]=\"isModalOpen\" [newTask]=\"newTask\" (formSubmitted)=\"createTask(newTask)\" (modalClosed)=\"toggleTaskModal();\"></create-modal>\n\n  <alert [visible]=\"alert.visible\" [status]=\"alert.status\" [message]=\"alert.message\" (alertClosed)=\"closeAlert()\"></alert>\n";
+	var template = exports.template = "\n  <navbar [title]=\"title\" (modalOpened)=\"toggleTaskModal()\"></navbar>\n\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"taskFilter('planned')\" [totalEstimate]=\"totalEstimate('planned')\" (modalWasOpened)=\"toggleTaskModal('planned')\" (dropdownWasToggled)=\"toggleDropdown($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n\n      <task-list [status]=\"'in-progress'\" [tasks]=\"taskFilter('in-progress')\" [totalEstimate]=\"totalEstimate('in-progress')\" (modalWasOpened)=\"toggleTaskModal('in-progress')\" (dropdownWasToggled)=\"toggleDropdown($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n\n      <task-list [status]=\"'completed'\" [tasks]=\"taskFilter('completed')\" (modalWasOpened)=\"toggleTaskModal('completed')\" [totalEstimate]=\"totalEstimate('completed')\" (dropdownWasToggled)=\"toggleDropdown($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n    </div>\n  </div>\n\n  <create-modal [isModalOpen]=\"isModalOpen\" [newTask]=\"newTask\" (formSubmitted)=\"createTask(newTask)\" (modalClosed)=\"toggleTaskModal();\"></create-modal>\n\n  <alert [visible]=\"alert.visible\" [status]=\"alert.status\" [message]=\"alert.message\" (alertClosed)=\"closeAlert()\"></alert>\n";
 	exports.default = template;
 
 /***/ },
@@ -66021,6 +66031,7 @@
 	    function Task(taskConstructor) {
 	        _classCallCheck(this, Task);
 	
+	        this.id = taskConstructor.id;
 	        this.title = taskConstructor.title;
 	        this.status = taskConstructor.status;
 	        this.description = taskConstructor.description;
@@ -66085,12 +66096,18 @@
 	        _classCallCheck(this, TaskList);
 	
 	        this.modalWasOpened = new _core.EventEmitter();
+	        this.dropdownWasToggled = new _core.EventEmitter();
 	    }
 	
 	    _createClass(TaskList, [{
 	        key: "openModal",
 	        value: function openModal(status) {
 	            this.modalWasOpened.emit(status);
+	        }
+	    }, {
+	        key: "openDropdown",
+	        value: function openDropdown(taskId) {
+	            this.dropdownWasToggled.emit(taskId);
 	        }
 	    }]);
 	
@@ -66099,7 +66116,9 @@
 	__decorate([(0, _core.Input)(), __metadata("design:type", String)], TaskList.prototype, "status", void 0);
 	__decorate([(0, _core.Input)(), __metadata("design:type", Array)], TaskList.prototype, "tasks", void 0);
 	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], TaskList.prototype, "totalEstimate", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], TaskList.prototype, "activeDropdown", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "modalWasOpened", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "dropdownWasToggled", void 0);
 	exports.TaskList = TaskList = __decorate([(0, _core.Component)({
 	    selector: 'task-list',
 	    template: _taskList.template
@@ -66115,7 +66134,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize\">{{status}}</h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">\n          <span class=\"plus-text\">+</span>\n          <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title\">\n              <h5>\n                <strong>{{task.title}}</strong>\n                <button class=\"btn btn-xs btn-default pull-right\">Edit</button>\n                <button class=\"btn btn-xs btn-default pull-right\">Delete</button>\n              </h5>\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><strong>Estimate:</strong> {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><strong>Logged Work:</strong> {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h5 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge\">{{tasks.length}}</span>\n            </h5>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h5>Total Estimate: <span class=\"badge\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span></h5>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize {{status}}\">\n            <span *ngIf=\"status == 'completed'\" class=\"fa fa-check-circle-o\"></span>\n            <span *ngIf=\"status == 'in-progress'\"class=\"fa fa-dot-circle-o\"></span>\n            <span *ngIf=\"status == 'planned'\" class=\"fa fa-circle-o\"></span>\n            {{status}}\n          </h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">\n          <span class=\"plus-text\">+</span>\n          <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title {{status}}\">\n              <h5>\n                {{task.title}}\n                <div class=\"dropdown pull-right\" [class.open]=\"activeDropdown == task.id\">\n                  <button (click)=\"openDropdown(task.id)\" class=\"btn btn-default btn-borderless btn-xs pull-right dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                    <span class=\"fa fa-ellipsis-h fa-lg\"></span>\n                  </button>\n                  <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dropdownMenu1\">\n                    <li *ngIf=\"status == 'planned' || status == 'completed'\"><a href=\"#\">Mark In-Progress</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\">Mark Planned</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\">Mark Completed</a></li>\n                    <li role=\"separator\" class=\"divider\"></li>\n                    <li><a href=\"#\">Edit</a></li>\n                    <li><a href=\"#\">Delete</a></li>\n                  </ul>\n                </div>\n              </h5>\n\n\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h6 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge {{status}}\">{{tasks.length}}</span>\n            </h6>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h6>\n              Total Estimate:\n              <span class=\"badge {{status}}\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>\n            </h6>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ },
@@ -66276,20 +66295,6 @@
 
 /***/ },
 /* 297 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var env = exports.env = {
-	    production: false
-	};
-	exports.default = env;
-
-/***/ },
-/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -66305,7 +66310,7 @@
 	
 	var _core = __webpack_require__(262);
 	
-	var _navbar = __webpack_require__(299);
+	var _navbar = __webpack_require__(298);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -66346,7 +66351,7 @@
 	exports.Navbar = Navbar;
 
 /***/ },
-/* 299 */
+/* 298 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -66356,6 +66361,20 @@
 	});
 	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"navbar row\">\n      <div class=\"col-lg-6\">\n        <h1>{{title}}</h1>\n      </div>\n      <div class=\"col-lg-6\">\n        <button class=\"btn btn-primary pull-right\" (click)=\"modalWasOpened()\">\n        Create Task\n        </button>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
+
+/***/ },
+/* 299 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var env = exports.env = {
+	    production: false
+	};
+	exports.default = env;
 
 /***/ }
 /******/ ]);

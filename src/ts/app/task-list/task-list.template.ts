@@ -3,7 +3,12 @@ export const template = `
     <div class="well category {{status}}">
       <div class="category-title">
         <div class="col-xs-6">
-          <h4 class="text-capitalize">{{status}}</h4>
+          <h4 class="text-capitalize {{status}}">
+            <span *ngIf="status == 'completed'" class="fa fa-check-circle-o"></span>
+            <span *ngIf="status == 'in-progress'"class="fa fa-dot-circle-o"></span>
+            <span *ngIf="status == 'planned'" class="fa fa-circle-o"></span>
+            {{status}}
+          </h4>
         </div>
         <div class="col-xs-6">
           <button (click)="openModal(status)" class="btn btn-xs btn-rounded btn-create btn-default pull-right">
@@ -20,12 +25,25 @@ export const template = `
 
         <ng-container *ngIf="tasks.length > 0">
           <div class="task" *ngFor="let task of tasks">
-            <div class="task-title">
+            <div class="task-title {{status}}">
               <h5>
-                <strong>{{task.title}}</strong>
-                <button class="btn btn-xs btn-default pull-right">Edit</button>
-                <button class="btn btn-xs btn-default pull-right">Delete</button>
+                {{task.title}}
+                <div class="dropdown pull-right" [class.open]="activeDropdown == task.id">
+                  <button (click)="openDropdown(task.id)" class="btn btn-default btn-borderless btn-xs pull-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="fa fa-ellipsis-h fa-lg"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                    <li *ngIf="status == 'planned' || status == 'completed'"><a href="#">Mark In-Progress</a></li>
+                    <li *ngIf="status == 'in-progress'"><a href="#">Mark Planned</a></li>
+                    <li *ngIf="status == 'in-progress'"><a href="#">Mark Completed</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </div>
               </h5>
+
+
             </div>
             <div class="task-body">
               <p>{{task.description}}</p>
@@ -33,10 +51,10 @@ export const template = `
             <div class="task-footer">
               <div class="row">
                 <div class="col-xs-6 text-left">
-                  <p><strong>Estimate:</strong> {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</p>
+                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>
                 </div>
                 <div class="col-xs-6 text-right">
-                  <p><strong>Logged Work:</strong> {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</p>
+                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>
                 </div>
               </div>
             </div>
@@ -48,13 +66,16 @@ export const template = `
       <div class="category-status">
         <div class="row">
           <div class="col-xs-6 text-left">
-            <h5 class="text-capitalize">
+            <h6 class="text-capitalize">
               {{status}} Tasks:
-              <span class="badge">{{tasks.length}}</span>
-            </h5>
+              <span class="badge {{status}}">{{tasks.length}}</span>
+            </h6>
           </div>
           <div class="col-xs-6 text-right">
-            <h5>Total Estimate: <span class="badge">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span></h5>
+            <h6>
+              Total Estimate:
+              <span class="badge {{status}}">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>
+            </h6>
           </div>
         </div>
       </div>
