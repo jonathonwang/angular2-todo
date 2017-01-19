@@ -4,7 +4,7 @@ export const template = `
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" (click)="closeModal($event)" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-center">Create Task</h4>
+        <h4 class="modal-title">Create Task</h4>
       </div>
       <div class="modal-body">
         <!-- Begin Form -->
@@ -25,13 +25,19 @@ export const template = `
               <label for="description">Description:</label>
               <textarea name="description" [(ngModel)]="newTask.description" class="form-control" placeholder="Description" rows="5"></textarea>
             </div>
-            <div class="form-group">
-              <label for="estimate">Time Estimate:</label>
-              <input name="estimate" type="text" [(ngModel)]="newTask.timeSpent" class="form-control" placeholder="Enter Minutes ex: 50">
-            </div>
-            <div class="form-group">
-              <label for="timeSpent">Time Spent:</label>
-              <input name="timeSpent" type="text" [(ngModel)]="newTask.timeSpent" class="form-control" placeholder="Enter Minutes ex: 10">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label for="estimate">Time Estimate:</label>
+                  <input name="estimate" type="text" [(ngModel)]="newTask.estimate" class="form-control" placeholder="Enter Minutes ex: 50">
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label for="timeSpent">Time Spent:</label>
+                  <input name="timeSpent" type="text" [(ngModel)]="newTask.timeSpent" class="form-control" placeholder="Enter Minutes ex: 10">
+                </div>
+              </div>
             </div>
           </form>
         <!-- End Form -->

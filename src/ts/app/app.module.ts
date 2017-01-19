@@ -9,6 +9,7 @@ import { TaskList } from './task-list/task-list.component';
 import { CreateModal } from './create-modal/create-modal.component';
 import { Alert } from './alert/alert.component';
 import { Navbar } from './navbar/navbar.component';
+import { DeleteModal } from './delete-modal/delete-modal.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { Navbar } from './navbar/navbar.component';
     TaskList,
     CreateModal,
     Alert,
-    Navbar
+    Navbar,
+    DeleteModal
   ],
   imports: [
     BrowserModule,

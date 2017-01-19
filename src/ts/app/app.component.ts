@@ -60,6 +60,7 @@ export class AppComponent implements IAppComponent {
     createdAt: Date,
     updatedAt: Date
   };
+  deleteTaskId: number = -1;
   alert = {
     status: '',
     message: '',
@@ -68,6 +69,7 @@ export class AppComponent implements IAppComponent {
   activeDropdown: number = -1;
   // Methods
   isModalOpen: boolean = false;
+  isDeleteModalOpen: boolean = false;
   taskFilter(taskStatus: string): Array<Task> {
     return this.tasks.filter((task) => task.status === taskStatus);
   }
@@ -125,5 +127,20 @@ export class AppComponent implements IAppComponent {
   changeTaskStatus(taskData) {
     const taskIndex = this.tasks.findIndex((task) => task.id === taskData.id);
     this.tasks[taskIndex].status = taskData.newStatus;
+  }
+  toggleDeleteModal(taskId?: number) {
+    this.isDeleteModalOpen = !this.isDeleteModalOpen;
+    if (taskId) {
+      this.deleteTaskId = taskId;
+    }
+  }
+  removeTask(taskId) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
+    this.toggleDeleteModal();
+    this.tasks.splice(taskIndex, 1);
+    this.resetDeleteTaskId();
+  }
+  resetDeleteTaskId() {
+    this.deleteTaskId = -1;
   }
 }

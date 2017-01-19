@@ -38,7 +38,7 @@ export const template = `
                     <li *ngIf="status == 'in-progress'"><a href="#" (click)="moveTask(task.id, 'completed')">Mark Completed</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#" (click)="openDeleteModal(task.id)">Delete</a></li>
                   </ul>
                 </div>
               </h5>

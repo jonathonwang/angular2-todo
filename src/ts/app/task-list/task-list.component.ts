@@ -21,6 +21,7 @@ export class TaskList implements ITaskList {
   @Input() totalEstimate: number;
   @Input() activeDropdown: number;
   @Output() modalWasOpened = new EventEmitter();
+  @Output() deleteModalWasOpened = new EventEmitter();
   @Output() dropdownWasToggled = new EventEmitter();
   @Output() taskWasMoved = new EventEmitter();
   openModal(status: string): void {
@@ -32,5 +33,9 @@ export class TaskList implements ITaskList {
   moveTask(taskId: number, newStatus: string): void {
     this.taskWasMoved.emit({ id: taskId, newStatus });
     this.dropdownWasToggled.emit(taskId);
+  }
+  openDeleteModal(taskId): void {
+    this.deleteModalWasOpened.emit(taskId);
+    this.dropdownWasToggled.emit();
   }
 }

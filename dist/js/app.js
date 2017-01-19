@@ -57835,6 +57835,8 @@
 	
 	var _navbar = __webpack_require__(297);
 	
+	var _deleteModal = __webpack_require__(300);
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
@@ -57850,7 +57852,7 @@
 	    _classCallCheck(this, AppModule);
 	};
 	exports.AppModule = AppModule = __decorate([(0, _core.NgModule)({
-	    declarations: [_app.AppComponent, _taskList.TaskList, _createModal.CreateModal, _alert.Alert, _navbar.Navbar],
+	    declarations: [_app.AppComponent, _taskList.TaskList, _createModal.CreateModal, _alert.Alert, _navbar.Navbar, _deleteModal.DeleteModal],
 	    imports: [_platformBrowser.BrowserModule, _forms.FormsModule, _http.HttpModule],
 	    providers: [],
 	    bootstrap: [_app.AppComponent]
@@ -65908,6 +65910,7 @@
 	            createdAt: Date,
 	            updatedAt: Date
 	        };
+	        this.deleteTaskId = -1;
 	        this.alert = {
 	            status: '',
 	            message: '',
@@ -65915,6 +65918,7 @@
 	        };
 	        this.activeDropdown = -1;
 	        this.isModalOpen = false;
+	        this.isDeleteModalOpen = false;
 	    }
 	
 	    _createClass(AppComponent, [{
@@ -65999,6 +66003,29 @@
 	            });
 	            this.tasks[taskIndex].status = taskData.newStatus;
 	        }
+	    }, {
+	        key: "toggleDeleteModal",
+	        value: function toggleDeleteModal(taskId) {
+	            this.isDeleteModalOpen = !this.isDeleteModalOpen;
+	            if (taskId) {
+	                this.deleteTaskId = taskId;
+	            }
+	        }
+	    }, {
+	        key: "removeTask",
+	        value: function removeTask(taskId) {
+	            var taskIndex = this.tasks.findIndex(function (task) {
+	                return task.id === taskId;
+	            });
+	            this.toggleDeleteModal();
+	            this.tasks.splice(taskIndex, 1);
+	            this.resetDeleteTaskId();
+	        }
+	    }, {
+	        key: "resetDeleteTaskId",
+	        value: function resetDeleteTaskId() {
+	            this.deleteTaskId = -1;
+	        }
 	    }]);
 	
 	    return AppComponent;
@@ -66018,7 +66045,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <navbar [title]=\"title\" (modalOpened)=\"toggleTaskModal()\"></navbar>\n\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"taskFilter('planned')\" [totalEstimate]=\"totalEstimate('planned')\" (modalWasOpened)=\"toggleTaskModal('planned')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n\n      <task-list [status]=\"'in-progress'\" [tasks]=\"taskFilter('in-progress')\" [totalEstimate]=\"totalEstimate('in-progress')\" (modalWasOpened)=\"toggleTaskModal('in-progress')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n\n      <task-list [status]=\"'completed'\" [tasks]=\"taskFilter('completed')\" (modalWasOpened)=\"toggleTaskModal('completed')\" [totalEstimate]=\"totalEstimate('completed')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\"></task-list>\n    </div>\n  </div>\n\n  <create-modal [isModalOpen]=\"isModalOpen\" [newTask]=\"newTask\" (formSubmitted)=\"createTask(newTask)\" (modalClosed)=\"toggleTaskModal();\"></create-modal>\n\n  <alert [visible]=\"alert.visible\" [status]=\"alert.status\" [message]=\"alert.message\" (alertClosed)=\"closeAlert()\"></alert>\n";
+	var template = exports.template = "\n  <navbar [title]=\"title\" (modalOpened)=\"toggleTaskModal()\"></navbar>\n\n  <div class=\"container-fluid\">\n    <div class=\"row\">\n      <task-list [status]=\"'planned'\" [tasks]=\"taskFilter('planned')\" [totalEstimate]=\"totalEstimate('planned')\" (modalWasOpened)=\"toggleTaskModal('planned')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\" (deleteModalWasOpened)=\"toggleDeleteModal($event)\"></task-list>\n\n      <task-list [status]=\"'in-progress'\" [tasks]=\"taskFilter('in-progress')\" [totalEstimate]=\"totalEstimate('in-progress')\" (modalWasOpened)=\"toggleTaskModal('in-progress')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\" (deleteModalWasOpened)=\"toggleDeleteModal($event)\"></task-list>\n\n      <task-list [status]=\"'completed'\" [tasks]=\"taskFilter('completed')\" (modalWasOpened)=\"toggleTaskModal('completed')\" [totalEstimate]=\"totalEstimate('completed')\" (dropdownWasToggled)=\"toggleDropdown($event)\" (taskWasMoved)=\"changeTaskStatus($event)\" [activeDropdown]=\"activeDropdown\" (deleteModalWasOpened)=\"toggleDeleteModal($event)\"></task-list>\n    </div>\n  </div>\n\n  <create-modal [isModalOpen]=\"isModalOpen\" [newTask]=\"newTask\" (formSubmitted)=\"createTask(newTask)\" (modalClosed)=\"toggleTaskModal();\"></create-modal>\n\n  <delete-modal [isDeleteModalOpen]=\"isDeleteModalOpen\" [deleteTaskId]=\"deleteTaskId\" (deleteFormWasSubmitted)=\"removeTask(deleteTaskId)\" (deleteModalWasClosed)=\"toggleDeleteModal()\"></delete-modal>\n\n  <alert [visible]=\"alert.visible\" [status]=\"alert.status\" [message]=\"alert.message\" (alertClosed)=\"closeAlert()\"></alert>\n\n";
 	exports.default = template;
 
 /***/ },
@@ -66104,6 +66131,7 @@
 	        _classCallCheck(this, TaskList);
 	
 	        this.modalWasOpened = new _core.EventEmitter();
+	        this.deleteModalWasOpened = new _core.EventEmitter();
 	        this.dropdownWasToggled = new _core.EventEmitter();
 	        this.taskWasMoved = new _core.EventEmitter();
 	    }
@@ -66124,6 +66152,12 @@
 	            this.taskWasMoved.emit({ id: taskId, newStatus: newStatus });
 	            this.dropdownWasToggled.emit(taskId);
 	        }
+	    }, {
+	        key: "openDeleteModal",
+	        value: function openDeleteModal(taskId) {
+	            this.deleteModalWasOpened.emit(taskId);
+	            this.dropdownWasToggled.emit();
+	        }
 	    }]);
 	
 	    return TaskList;
@@ -66133,6 +66167,7 @@
 	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], TaskList.prototype, "totalEstimate", void 0);
 	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], TaskList.prototype, "activeDropdown", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "modalWasOpened", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "deleteModalWasOpened", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "dropdownWasToggled", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], TaskList.prototype, "taskWasMoved", void 0);
 	exports.TaskList = TaskList = __decorate([(0, _core.Component)({
@@ -66150,7 +66185,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize {{status}}\">\n            <span *ngIf=\"status == 'completed'\" class=\"fa fa-check-circle-o\"></span>\n            <span *ngIf=\"status == 'in-progress'\"class=\"fa fa-dot-circle-o\"></span>\n            <span *ngIf=\"status == 'planned'\" class=\"fa fa-circle-o\"></span>\n            {{status}}\n          </h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">\n          <span class=\"plus-text\">+</span>\n          <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title {{status}}\">\n              <h5>\n                {{task.title}}\n                <div class=\"dropdown pull-right\" [class.open]=\"activeDropdown == task.id\">\n                  <button (click)=\"openDropdown(task.id)\" class=\"btn btn-default btn-borderless btn-xs pull-right dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                    <span class=\"fa fa-ellipsis-h fa-lg\"></span>\n                  </button>\n                  <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dropdownMenu1\">\n                    <li *ngIf=\"status == 'planned' || status == 'completed'\"><a href=\"#\" (click)=\"moveTask(task.id, 'in-progress')\">Mark In-Progress</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'planned')\">Mark Planned</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'completed')\">Mark Completed</a></li>\n                    <li role=\"separator\" class=\"divider\"></li>\n                    <li><a href=\"#\">Edit</a></li>\n                    <li><a href=\"#\">Delete</a></li>\n                  </ul>\n                </div>\n              </h5>\n\n\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h6 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge {{status}}\">{{tasks.length}}</span>\n            </h6>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h6>\n              Total Estimate:\n              <span class=\"badge {{status}}\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>\n            </h6>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize {{status}}\">\n            <span *ngIf=\"status == 'completed'\" class=\"fa fa-check-circle-o\"></span>\n            <span *ngIf=\"status == 'in-progress'\"class=\"fa fa-dot-circle-o\"></span>\n            <span *ngIf=\"status == 'planned'\" class=\"fa fa-circle-o\"></span>\n            {{status}}\n          </h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">\n          <span class=\"plus-text\">+</span>\n          <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title {{status}}\">\n              <h5>\n                {{task.title}}\n                <div class=\"dropdown pull-right\" [class.open]=\"activeDropdown == task.id\">\n                  <button (click)=\"openDropdown(task.id)\" class=\"btn btn-default btn-borderless btn-xs pull-right dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                    <span class=\"fa fa-ellipsis-h fa-lg\"></span>\n                  </button>\n                  <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dropdownMenu1\">\n                    <li *ngIf=\"status == 'planned' || status == 'completed'\"><a href=\"#\" (click)=\"moveTask(task.id, 'in-progress')\">Mark In-Progress</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'planned')\">Mark Planned</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'completed')\">Mark Completed</a></li>\n                    <li role=\"separator\" class=\"divider\"></li>\n                    <li><a href=\"#\">Edit</a></li>\n                    <li><a href=\"#\" (click)=\"openDeleteModal(task.id)\">Delete</a></li>\n                  </ul>\n                </div>\n              </h5>\n\n\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h6 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge {{status}}\">{{tasks.length}}</span>\n            </h6>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h6>\n              Total Estimate:\n              <span class=\"badge {{status}}\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>\n            </h6>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ },
@@ -66234,7 +66269,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n<div class=\"modal fade\" [class.in]=\"isModalOpen\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title text-center\">Create Task</h4>\n      </div>\n      <div class=\"modal-body\">\n        <!-- Begin Form -->\n          <form (ngSubmit)=\"submitTaskForm($event)\" #createTaskForm=\"ngForm\">\n            <div class=\"form-group\">\n              <label for=\"title\">Title:</label>\n              <input name=\"title\" type=\"text\" [(ngModel)]=\"newTask.title\" class=\"form-control\" placeholder=\"Task Title\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"status\">Status:</label>\n              <select name=\"status\" [(ngModel)]=\"newTask.status\" required>\n                <option value=\"planned\">Planned</option>\n                <option value=\"in-progress\">In-Progress</option>\n                <option value=\"completed\">Completed</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"description\">Description:</label>\n              <textarea name=\"description\" [(ngModel)]=\"newTask.description\" class=\"form-control\" placeholder=\"Description\" rows=\"5\"></textarea>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"estimate\">Time Estimate:</label>\n              <input name=\"estimate\" type=\"text\" [(ngModel)]=\"newTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 50\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"timeSpent\">Time Spent:</label>\n              <input name=\"timeSpent\" type=\"text\" [(ngModel)]=\"newTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 10\">\n            </div>\n          </form>\n        <!-- End Form -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"btn btn-default\">Close</button>\n        <button type=\"button\" (click)=\"submitTaskForm($event)\" class=\"btn btn-primary\">Submit</button>\n      </div>\n    </div><!-- /.modal-content -->\n  </div><!-- /.modal-dialog -->\n</div><!-- /.modal -->\n";
+	var template = exports.template = "\n<div class=\"modal fade\" [class.in]=\"isModalOpen\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Create Task</h4>\n      </div>\n      <div class=\"modal-body\">\n        <!-- Begin Form -->\n          <form (ngSubmit)=\"submitTaskForm($event)\" #createTaskForm=\"ngForm\">\n            <div class=\"form-group\">\n              <label for=\"title\">Title:</label>\n              <input name=\"title\" type=\"text\" [(ngModel)]=\"newTask.title\" class=\"form-control\" placeholder=\"Task Title\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"status\">Status:</label>\n              <select name=\"status\" [(ngModel)]=\"newTask.status\" required>\n                <option value=\"planned\">Planned</option>\n                <option value=\"in-progress\">In-Progress</option>\n                <option value=\"completed\">Completed</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"description\">Description:</label>\n              <textarea name=\"description\" [(ngModel)]=\"newTask.description\" class=\"form-control\" placeholder=\"Description\" rows=\"5\"></textarea>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-lg-6 col-md-6 col-xs-12\">\n                <div class=\"form-group\">\n                  <label for=\"estimate\">Time Estimate:</label>\n                  <input name=\"estimate\" type=\"text\" [(ngModel)]=\"newTask.estimate\" class=\"form-control\" placeholder=\"Enter Minutes ex: 50\">\n                </div>\n              </div>\n              <div class=\"col-lg-6 col-md-6 col-xs-12\">\n                <div class=\"form-group\">\n                  <label for=\"timeSpent\">Time Spent:</label>\n                  <input name=\"timeSpent\" type=\"text\" [(ngModel)]=\"newTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 10\">\n                </div>\n              </div>\n            </div>\n          </form>\n        <!-- End Form -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" (click)=\"closeModal($event)\" class=\"btn btn-default\">Close</button>\n        <button type=\"button\" (click)=\"submitTaskForm($event)\" class=\"btn btn-primary\">Submit</button>\n      </div>\n    </div><!-- /.modal-content -->\n  </div><!-- /.modal-dialog -->\n</div><!-- /.modal -->\n";
 	exports.default = template;
 
 /***/ },
@@ -66391,6 +66426,83 @@
 	    production: false
 	};
 	exports.default = env;
+
+/***/ },
+/* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.DeleteModal = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _core = __webpack_require__(262);
+	
+	var _deleteModal = __webpack_require__(301);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+	    var c = arguments.length,
+	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+	        d;
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = undefined && undefined.__metadata || function (k, v) {
+	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	
+	var DeleteModal = function () {
+	    function DeleteModal() {
+	        _classCallCheck(this, DeleteModal);
+	
+	        this.deleteFormWasSubmitted = new _core.EventEmitter();
+	        this.deleteModalWasClosed = new _core.EventEmitter();
+	    }
+	
+	    _createClass(DeleteModal, [{
+	        key: "submitDeleteTaskForm",
+	        value: function submitDeleteTaskForm(taskId) {
+	            this.deleteFormWasSubmitted.emit(taskId);
+	        }
+	    }, {
+	        key: "closeDeleteTaskModal",
+	        value: function closeDeleteTaskModal() {
+	            this.deleteModalWasClosed.emit();
+	        }
+	    }]);
+	
+	    return DeleteModal;
+	}();
+	__decorate([(0, _core.Input)(), __metadata("design:type", Boolean)], DeleteModal.prototype, "isDeleteModalOpen", void 0);
+	__decorate([(0, _core.Input)(), __metadata("design:type", Number)], DeleteModal.prototype, "deleteTaskId", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], DeleteModal.prototype, "deleteFormWasSubmitted", void 0);
+	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], DeleteModal.prototype, "deleteModalWasClosed", void 0);
+	exports.DeleteModal = DeleteModal = __decorate([(0, _core.Component)({
+	    selector: 'delete-modal',
+	    template: _deleteModal.template
+	})], DeleteModal);
+	exports.DeleteModal = DeleteModal;
+
+/***/ },
+/* 301 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var template = exports.template = "\n<div class=\"modal fade\" [class.in]=\"isDeleteModalOpen\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" (click)=\"closeDeleteTaskModal()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Delete Task</h4>\n      </div>\n      <div class=\"modal-body\">\n        <h5>Are you sure you want to delete this task?</h5>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" (click)=\"closeDeleteTaskModal()\" class=\"btn btn-default\">Close</button>\n        <button type=\"button\" (click)=\"submitDeleteTaskForm(deleteTaskId)\" class=\"btn btn-primary\">Delete</button>\n      </div>\n    </div><!-- /.modal-content -->\n  </div><!-- /.modal-dialog -->\n</div><!-- /.modal -->\n";
+	exports.default = template;
 
 /***/ }
 /******/ ]);
