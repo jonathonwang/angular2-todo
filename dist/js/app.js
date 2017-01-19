@@ -65879,8 +65879,8 @@
 	            description: '',
 	            estimate: 0,
 	            timeSpent: 0,
-	            createdAt: Date,
-	            updatedAt: Date
+	            createdAt: new Date(),
+	            updatedAt: new Date()
 	        };
 	        this.editTask = {
 	            id: -1,
@@ -65889,8 +65889,8 @@
 	            description: '',
 	            estimate: 0,
 	            timeSpent: 0,
-	            createdAt: Date,
-	            updatedAt: Date
+	            createdAt: new Date(),
+	            updatedAt: new Date()
 	        };
 	        this.alert = {
 	            status: '',
@@ -65953,8 +65953,8 @@
 	                description: '',
 	                estimate: 0,
 	                timeSpent: 0,
-	                createdAt: Date,
-	                updatedAt: Date
+	                createdAt: new Date(),
+	                updatedAt: new Date()
 	            };
 	        }
 	    }, {
@@ -66052,8 +66052,8 @@
 	                description: '',
 	                estimate: 0,
 	                timeSpent: 0,
-	                createdAt: Date,
-	                updatedAt: Date
+	                createdAt: new Date(),
+	                updatedAt: new Date()
 	            };
 	        }
 	    }]);
@@ -66287,7 +66287,6 @@
 	}();
 	__decorate([(0, _core.Input)(), __metadata("design:type", Boolean)], CreateModal.prototype, "isModalOpen", void 0);
 	__decorate([(0, _core.Input)(), __metadata("design:type", Object)], CreateModal.prototype, "newTask", void 0);
-	__decorate([(0, _core.Input)(), __metadata("design:type", Function)], CreateModal.prototype, "createTask", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], CreateModal.prototype, "formSubmitted", void 0);
 	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], CreateModal.prototype, "modalClosed", void 0);
 	exports.CreateModal = CreateModal = __decorate([(0, _core.Component)({

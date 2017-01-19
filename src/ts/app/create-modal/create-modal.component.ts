@@ -15,7 +15,6 @@ import { ICreateModal } from './create-modal.interface';
 export class CreateModal implements ICreateModal {
   @Input() isModalOpen: boolean;
   @Input() newTask: ITask;
-  @Input() createTask: Function;
   @Output() formSubmitted = new EventEmitter();
   @Output() modalClosed = new EventEmitter();
   submitTaskForm(e: Event) {

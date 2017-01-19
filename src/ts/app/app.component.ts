@@ -18,26 +18,26 @@ export class AppComponent implements IAppComponent {
   // Task Array State
   tasks: Array<Task> = [];
   // New Task State
-  newTask = {
+  newTask: ITask = {
     id: 4,
     title: '',
     status: 'planned',
     description: '',
     estimate: 0,
     timeSpent: 0,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
   // Edit Task State
-  editTask = {
+  editTask: ITask = {
     id: -1,
     title: '',
     status: 'planned',
     description: '',
     estimate: 0,
     timeSpent: 0,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
   // Alert State
   alert = {
@@ -91,9 +91,9 @@ export class AppComponent implements IAppComponent {
       description: '',
       estimate: 0,
       timeSpent: 0,
-      createdAt: Date,
-      updatedAt: Date
-    };
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as ITask;
   }
   // Show Alert
   showAlert(status: string, message: string): void {
@@ -114,19 +114,19 @@ export class AppComponent implements IAppComponent {
     }
   }
   // Change the Status of a Task
-  changeTaskStatus(taskData) {
+  changeTaskStatus(taskData): void {
     const taskIndex: number = this.tasks.findIndex((task) => task.id === taskData.id);
     this.tasks[taskIndex].status = taskData.newStatus;
   }
   // Toggle Delete Modal Open / Close
-  toggleDeleteModal(taskId?: number) {
+  toggleDeleteModal(taskId?: number): void {
     this.isDeleteModalOpen = !this.isDeleteModalOpen;
     if (taskId) {
       this.deleteTaskId = taskId;
     }
   }
   // Remove Task from Task Array in State
-  removeTask(taskId) {
+  removeTask(taskId: number): void {
     const taskIndex: number = this.tasks.findIndex((task) => task.id === taskId);
     this.toggleDeleteModal();
     this.tasks.splice(taskIndex, 1);
@@ -137,7 +137,7 @@ export class AppComponent implements IAppComponent {
     this.deleteTaskId = -1;
   }
   // Toggle Edit Modal Open / Close
-  toggleEditModal(taskId?: number) {
+  toggleEditModal(taskId?: number): void {
     this.isEditModalOpen = !this.isEditModalOpen;
     if (taskId) {
       this.toggleDropdown();
@@ -148,11 +148,11 @@ export class AppComponent implements IAppComponent {
     }
   }
   // Populate Edit Task Form with Task Data
-  populateEditTaskForm(editTask) {
+  populateEditTaskForm(editTask: ITask): void {
     this.editTask = editTask;
   }
   // Replace Task in Task Array with Edited Task;
-  submitEditTaskForm(editTask) {
+  submitEditTaskForm(editTask: ITask): void {
     const editedTaskIndex: number = this.tasks.findIndex((task) => task.id === editTask.id);
     if (editedTaskIndex > -1) {
       this.tasks[editedTaskIndex] = new Task(editTask);
@@ -163,7 +163,7 @@ export class AppComponent implements IAppComponent {
     }
   }
   // Reset Edit Task to original State
-  resetEditTask() {
+  resetEditTask(): void {
     this.editTask = {
       id: -1,
       title: '',
@@ -171,8 +171,8 @@ export class AppComponent implements IAppComponent {
       description: '',
       estimate: 0,
       timeSpent: 0,
-      createdAt: Date,
-      updatedAt: Date
-    };
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as ITask;
   }
 }

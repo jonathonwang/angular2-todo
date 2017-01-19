@@ -6,7 +6,6 @@ import { ITask } from '../app.interface';
 export interface ICreateModal {
   isModalOpen: boolean;
   newTask: ITask;
-  createTask: Function;
   formSubmitted: EventEmitter<ITask>;
   modalClosed: EventEmitter<Object>;
   submitTaskForm(e: Event): void;

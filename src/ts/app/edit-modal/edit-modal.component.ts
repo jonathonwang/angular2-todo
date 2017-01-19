@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 // Template Imports
 import { template } from './edit-modal.template';
 // Interface Imports
+import { IEditModal } from './edit-modal.interface';
 import { ITask } from '../app.interface';
 
 @Component({
@@ -10,15 +11,15 @@ import { ITask } from '../app.interface';
   template
 })
 
-export class EditModal {
+export class EditModal implements IEditModal {
   @Input() isEditModalOpen: boolean;
   @Input() editTask: ITask;
   @Output() editModalFormWasSubmitted = new EventEmitter();
   @Output() editModalFormWasClosed = new EventEmitter();
-  submitEditModalForm(editTask) {
+  submitEditModalForm(editTask): void {
     this.editModalFormWasSubmitted.emit(editTask);
   }
-  closeEditModalForm() {
+  closeEditModalForm(): void {
     this.editModalFormWasClosed.emit();
   }
 }
