@@ -3,11 +3,11 @@ export const template: string = `
 
   <div class="container-fluid">
     <div class="row">
-      <task-list [status]="'planned'" [tasks]="taskFilter('planned')" [totalEstimate]="totalEstimate('planned')" (modalWasOpened)="toggleTaskModal('planned')" (dropdownWasToggled)="toggleDropdown($event)" [activeDropdown]="activeDropdown"></task-list>
+      <task-list [status]="'planned'" [tasks]="taskFilter('planned')" [totalEstimate]="totalEstimate('planned')" (modalWasOpened)="toggleTaskModal('planned')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown"></task-list>
 
-      <task-list [status]="'in-progress'" [tasks]="taskFilter('in-progress')" [totalEstimate]="totalEstimate('in-progress')" (modalWasOpened)="toggleTaskModal('in-progress')" (dropdownWasToggled)="toggleDropdown($event)" [activeDropdown]="activeDropdown"></task-list>
+      <task-list [status]="'in-progress'" [tasks]="taskFilter('in-progress')" [totalEstimate]="totalEstimate('in-progress')" (modalWasOpened)="toggleTaskModal('in-progress')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown"></task-list>
 
-      <task-list [status]="'completed'" [tasks]="taskFilter('completed')" (modalWasOpened)="toggleTaskModal('completed')" [totalEstimate]="totalEstimate('completed')" (dropdownWasToggled)="toggleDropdown($event)" [activeDropdown]="activeDropdown"></task-list>
+      <task-list [status]="'completed'" [tasks]="taskFilter('completed')" (modalWasOpened)="toggleTaskModal('completed')" [totalEstimate]="totalEstimate('completed')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown"></task-list>
     </div>
   </div>
 

@@ -33,9 +33,9 @@ export const template = `
                     <span class="fa fa-ellipsis-h fa-lg"></span>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                    <li *ngIf="status == 'planned' || status == 'completed'"><a href="#">Mark In-Progress</a></li>
-                    <li *ngIf="status == 'in-progress'"><a href="#">Mark Planned</a></li>
-                    <li *ngIf="status == 'in-progress'"><a href="#">Mark Completed</a></li>
+                    <li *ngIf="status == 'planned' || status == 'completed'"><a href="#" (click)="moveTask(task.id, 'in-progress')">Mark In-Progress</a></li>
+                    <li *ngIf="status == 'in-progress'"><a href="#" (click)="moveTask(task.id, 'planned')">Mark Planned</a></li>
+                    <li *ngIf="status == 'in-progress'"><a href="#" (click)="moveTask(task.id, 'completed')">Mark Completed</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Edit</a></li>
                     <li><a href="#">Delete</a></li>

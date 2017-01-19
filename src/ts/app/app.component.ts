@@ -122,4 +122,8 @@ export class AppComponent implements IAppComponent {
       this.activeDropdown = -1;
     }
   }
+  changeTaskStatus(taskData) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === taskData.id);
+    this.tasks[taskIndex].status = taskData.newStatus;
+  }
 }
