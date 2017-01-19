@@ -24,6 +24,7 @@ export class TaskList implements ITaskList {
   @Output() deleteModalWasOpened = new EventEmitter();
   @Output() dropdownWasToggled = new EventEmitter();
   @Output() taskWasMoved = new EventEmitter();
+  @Output() editModalWasOpened = new EventEmitter();
   openModal(status: string): void {
     this.modalWasOpened.emit(status);
   }
@@ -34,8 +35,11 @@ export class TaskList implements ITaskList {
     this.taskWasMoved.emit({ id: taskId, newStatus });
     this.dropdownWasToggled.emit(taskId);
   }
-  openDeleteModal(taskId): void {
+  openDeleteModal(taskId: number): void {
     this.deleteModalWasOpened.emit(taskId);
     this.dropdownWasToggled.emit();
+  }
+  openEditModal(taskId: number): void {
+    this.editModalWasOpened.emit(taskId);
   }
 }

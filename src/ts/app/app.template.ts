@@ -3,15 +3,17 @@ export const template: string = `
 
   <div class="container-fluid">
     <div class="row">
-      <task-list [status]="'planned'" [tasks]="taskFilter('planned')" [totalEstimate]="totalEstimate('planned')" (modalWasOpened)="toggleTaskModal('planned')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)"></task-list>
+      <task-list [status]="'planned'" [tasks]="taskFilter('planned')" [totalEstimate]="totalEstimate('planned')" (modalWasOpened)="toggleTaskModal('planned')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)" (editModalWasOpened)="toggleEditModal($event)"></task-list>
 
-      <task-list [status]="'in-progress'" [tasks]="taskFilter('in-progress')" [totalEstimate]="totalEstimate('in-progress')" (modalWasOpened)="toggleTaskModal('in-progress')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)"></task-list>
+      <task-list [status]="'in-progress'" [tasks]="taskFilter('in-progress')" [totalEstimate]="totalEstimate('in-progress')" (modalWasOpened)="toggleTaskModal('in-progress')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)" (editModalWasOpened)="toggleEditModal($event)"></task-list>
 
-      <task-list [status]="'completed'" [tasks]="taskFilter('completed')" (modalWasOpened)="toggleTaskModal('completed')" [totalEstimate]="totalEstimate('completed')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)"></task-list>
+      <task-list [status]="'completed'" [tasks]="taskFilter('completed')" (modalWasOpened)="toggleTaskModal('completed')" [totalEstimate]="totalEstimate('completed')" (dropdownWasToggled)="toggleDropdown($event)" (taskWasMoved)="changeTaskStatus($event)" [activeDropdown]="activeDropdown" (deleteModalWasOpened)="toggleDeleteModal($event)" (editModalWasOpened)="toggleEditModal($event)"></task-list>
     </div>
   </div>
 
   <create-modal [isModalOpen]="isModalOpen" [newTask]="newTask" (formSubmitted)="createTask(newTask)" (modalClosed)="toggleTaskModal();"></create-modal>
+
+  <edit-modal [isEditModalOpen]="isEditModalOpen" [editTask]="editTask" (editModalFormWasSubmitted)="submitEditTaskForm($event)" (editModalFormWasClosed)="toggleEditModal()"></edit-modal>
 
   <delete-modal [isDeleteModalOpen]="isDeleteModalOpen" [deleteTaskId]="deleteTaskId" (deleteFormWasSubmitted)="removeTask(deleteTaskId)" (deleteModalWasClosed)="toggleDeleteModal()"></delete-modal>
 

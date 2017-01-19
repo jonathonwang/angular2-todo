@@ -5,20 +5,26 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 // Component Imports
 import { AppComponent } from './app.component';
-import { TaskList } from './task-list/task-list.component';
-import { CreateModal } from './create-modal/create-modal.component';
-import { Alert } from './alert/alert.component';
+// Navbar Import
 import { Navbar } from './navbar/navbar.component';
+// TaskList Import
+import { TaskList } from './task-list/task-list.component';
+// Modal Imports
+import { CreateModal } from './create-modal/create-modal.component';
 import { DeleteModal } from './delete-modal/delete-modal.component';
+import { EditModal } from './edit-modal/edit-modal.component';
+// Alert Import
+import { Alert } from './alert/alert.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    Navbar,
     TaskList,
     CreateModal,
-    Alert,
-    Navbar,
-    DeleteModal
+    DeleteModal,
+    EditModal,
+    Alert
   ],
   imports: [
     BrowserModule,

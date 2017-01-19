@@ -6,39 +6,6 @@ import { template } from './app.template';
 import { Task } from './app.classes';
 // Interface Imports
 import { IAppComponent, ITask } from './app.interface';
-// Child Components
-import { TaskList } from './task-list/task-list.component';
-
-const task1 = new Task ({
-  id: 1,
-  title: 'Planned Task',
-  status: 'planned',
-  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
-  estimate: 0,
-  timeSpent: 0,
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
-const task2 = new Task ({
-  id: 2,
-  title: 'Planned Task',
-  status: 'in-progress',
-  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
-  estimate: 0,
-  timeSpent: 0,
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
-const task3 = new Task ({
-  id: 3,
-  title: 'Planned Task',
-  status: 'completed',
-  description: 'This is where a very long description for a planned task could go to explain the task in further detail',
-  estimate: 0,
-  timeSpent: 0,
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
 
 @Component({
   selector: 'app',
@@ -48,8 +15,9 @@ const task3 = new Task ({
 export class AppComponent implements IAppComponent {
   // State
   title: string = 'Todo App';
-  tasks: Array<Task> = [task1, task2, task3];
-  // !!!!!! I need an interface here
+  // Task Array State
+  tasks: Array<Task> = [];
+  // New Task State
   newTask = {
     id: 4,
     title: '',
@@ -60,32 +28,49 @@ export class AppComponent implements IAppComponent {
     createdAt: Date,
     updatedAt: Date
   };
-  deleteTaskId: number = -1;
+  // Edit Task State
+  editTask = {
+    id: -1,
+    title: '',
+    status: 'planned',
+    description: '',
+    estimate: 0,
+    timeSpent: 0,
+    createdAt: Date,
+    updatedAt: Date
+  };
+  // Alert State
   alert = {
     status: '',
     message: '',
     visible: false
   };
+  deleteTaskId: number = -1;
   activeDropdown: number = -1;
-  // Methods
   isModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
+  isEditModalOpen: boolean = false;
+  // Methods
+  // Filter Tasks By Status
   taskFilter(taskStatus: string): Array<Task> {
     return this.tasks.filter((task) => task.status === taskStatus);
   }
+  // Calculate Estimate for all tasks in a given Status
   totalEstimate(taskStatus: string): number {
-    let total = 0;
+    let total: number = 0;
     this.tasks.filter((task) => task.status === taskStatus).map((task) => {
       total += task.estimate;
     });
     return total;
   }
+  // Toggle Task Create Modal Open / Closed
   toggleTaskModal(status?: string): void {
     if (status !== undefined) {
       this.newTask.status = status;
     }
     this.isModalOpen = !this.isModalOpen;
   }
+  // Create A New Task and push into Tasks Array
   createTask(taskData: ITask): void {
     if (taskData.title.length > 0) {
       const newTask = new Task(taskData);
@@ -97,6 +82,7 @@ export class AppComponent implements IAppComponent {
       this.showAlert('danger', 'Task Title is Required');
     }
   }
+  // Reset newTask State to original
   resetNewTaskFields(): void {
     this.newTask = {
       id: this.newTask.id + 1,
@@ -109,38 +95,84 @@ export class AppComponent implements IAppComponent {
       updatedAt: Date
     };
   }
+  // Show Alert
   showAlert(status: string, message: string): void {
     this.alert.visible = true;
     this.alert.status = status;
     this.alert.message = message;
   }
+  // Close Alert
   closeAlert(): void {
     this.alert.visible = false;
   }
-  toggleDropdown(taskId: number): void {
+  // Toggle Task Dropdown
+  toggleDropdown(taskId?: number): void {
     if (this.activeDropdown !== taskId) {
       this.activeDropdown = taskId;
     } else {
       this.activeDropdown = -1;
     }
   }
+  // Change the Status of a Task
   changeTaskStatus(taskData) {
-    const taskIndex = this.tasks.findIndex((task) => task.id === taskData.id);
+    const taskIndex: number = this.tasks.findIndex((task) => task.id === taskData.id);
     this.tasks[taskIndex].status = taskData.newStatus;
   }
+  // Toggle Delete Modal Open / Close
   toggleDeleteModal(taskId?: number) {
     this.isDeleteModalOpen = !this.isDeleteModalOpen;
     if (taskId) {
       this.deleteTaskId = taskId;
     }
   }
+  // Remove Task from Task Array in State
   removeTask(taskId) {
-    const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
+    const taskIndex: number = this.tasks.findIndex((task) => task.id === taskId);
     this.toggleDeleteModal();
     this.tasks.splice(taskIndex, 1);
     this.resetDeleteTaskId();
   }
+  // Reset Delete Task Id to original State
   resetDeleteTaskId() {
     this.deleteTaskId = -1;
+  }
+  // Toggle Edit Modal Open / Close
+  toggleEditModal(taskId?: number) {
+    this.isEditModalOpen = !this.isEditModalOpen;
+    if (taskId) {
+      this.toggleDropdown();
+      const taskIndex: number = this.tasks.findIndex((task) => task.id === taskId);
+      const editTask = this.tasks[taskIndex];
+      const clonedEditTask = Object.assign({}, editTask);
+      this.populateEditTaskForm(clonedEditTask);
+    }
+  }
+  // Populate Edit Task Form with Task Data
+  populateEditTaskForm(editTask) {
+    this.editTask = editTask;
+  }
+  // Replace Task in Task Array with Edited Task;
+  submitEditTaskForm(editTask) {
+    const editedTaskIndex: number = this.tasks.findIndex((task) => task.id === editTask.id);
+    if (editedTaskIndex > -1) {
+      this.tasks[editedTaskIndex] = new Task(editTask);
+      this.toggleEditModal();
+      this.resetEditTask();
+    } else {
+      this.showAlert('danger', 'Something Went Wrong, Please Try Again');
+    }
+  }
+  // Reset Edit Task to original State
+  resetEditTask() {
+    this.editTask = {
+      id: -1,
+      title: '',
+      status: 'planned',
+      description: '',
+      estimate: 0,
+      timeSpent: 0,
+      createdAt: Date,
+      updatedAt: Date
+    };
   }
 }
