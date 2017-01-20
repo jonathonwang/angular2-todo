@@ -1,7 +1,6 @@
 .category {
   min-height: 220px;
   max-height: calc(100vh - 74px);
-  overflow-y: scroll;
   padding: 0;
   background-color: lighten($light-grey, 10%);
   border-radius: 3px;
@@ -14,7 +13,7 @@
 
   .category-title {
     position: relative;
-    padding: 25px 0;
+    padding: 25px 0 50px;
 
     h4 {
       position: relative;
@@ -64,16 +63,18 @@
 
   .category-status {
     position: absolute;
-    left: 15px;
-    right: 15px;
-    bottom: 20px;
+    left: 16px;
+    right: 16px;
+    bottom: 21px;
     padding: 0 15px;
     text-align: center;
     background-color: #fff;
   }
 
   .category-body {
-    padding: 20px 15px 70px;
+    padding: 0 15px 55px;
+    max-height: calc(100vh - 162px);
+    overflow-y: scroll;
   }
 
 }

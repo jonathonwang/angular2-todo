@@ -46,7 +46,13 @@
       margin-top: -5px;
     }
   }
+
+  .task-body {
+    color: lighten($secondary-font-color, 10%);
+  }
+
   .task-footer {
     padding-top: 5px;
+    color: lighten($secondary-font-color, 10%);
   }
 }

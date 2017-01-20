@@ -54,10 +54,22 @@ export const template = `
             <div class="task-footer">
               <div class="row">
                 <div class="col-xs-6 text-left">
-                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>
+                  <p>
+                    <small>
+                      Estimate:
+                      {{task.estimate / 60 >= 1 ? task.estimate / 60 : task.estimate }}
+                      {{task.estimate / 60 >= 1 ? 'hours' : 'minutes'}}
+                    </small>
+                  </p>
                 </div>
                 <div class="col-xs-6 text-right">
-                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>
+                  <p>
+                    <small>
+                      Logged Work:
+                      {{task.timeSpent / 60 >= 1 ? task.timeSpent / 60 : task.timeSpent }}
+                      {{task.timeSpent / 60 >= 1 ? 'hours' : 'minutes'}}
+                    </small>
+                  </p>
                 </div>
               </div>
             </div>
@@ -77,7 +89,10 @@ export const template = `
           <div class="col-xs-6 text-right">
             <h6>
               Total Estimate:
-              <span class="badge {{status}}">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>
+              <span class="badge {{status}}">
+                {{totalEstimate / 60 >= 1 ? totalEstimate / 60 : totalEstimate}}
+                {{totalEstimate / 60 >= 1 ? 'hours' : 'minutes'}}
+              </span>
             </h6>
           </div>
         </div>

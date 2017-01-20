@@ -10,7 +10,7 @@ export const template = `
         <h5>Are you sure you want to delete this task?</h5>
       </div>
       <div class="modal-footer">
-        <button type="button" (click)="closeDeleteTaskModal()" class="btn btn-default">Close</button>
+        <button type="button" (click)="closeDeleteTaskModal()" class="btn btn-default pull-left">Cancel</button>
         <button type="button" (click)="submitDeleteTaskForm(deleteTaskId)" class="btn btn-primary">Delete</button>
       </div>
     </div><!-- /.modal-content -->
