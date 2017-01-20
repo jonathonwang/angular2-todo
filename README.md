@@ -5,5 +5,5 @@
 * cd into cloned directory
 * Run `npm install`
 * run `webpack-dev-server`
-* run `json-server`
+* run `json-server --watch db.json`
 * open http://localhost:8080
