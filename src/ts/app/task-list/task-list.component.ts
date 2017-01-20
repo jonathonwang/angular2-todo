@@ -32,7 +32,7 @@ export class TaskList implements ITaskList {
     this.dropdownWasToggled.emit(taskId);
   }
   moveTask(taskId: number, newStatus: string): void {
-    this.taskWasMoved.emit({ id: taskId, newStatus });
+    this.taskWasMoved.emit({ id: taskId, status: newStatus });
     this.dropdownWasToggled.emit(taskId);
   }
   openDeleteModal(taskId: number): void {

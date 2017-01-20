@@ -21,7 +21,6 @@ export class AppComponent implements IAppComponent {
   tasks: Array<Task> = [];
   // New Task State
   newTask: ITask = {
-    id: 0,
     title: '',
     status: 'planned',
     description: '',
@@ -60,7 +59,6 @@ export class AppComponent implements IAppComponent {
   injectRetrievedTasks() {
     api.fetchTasks(
       (tasks) => {
-        this.newTask.id = tasks[tasks.length - 1].id + 1;
         for (let task of tasks) {
           const newTask = new Task(task);
           this.tasks.push(newTask);
@@ -112,7 +110,6 @@ export class AppComponent implements IAppComponent {
   // Reset newTask State to original
   resetNewTaskFields(): void {
     this.newTask = {
-      id: this.newTask.id + 1,
       title: '',
       status: 'planned',
       description: '',
@@ -143,7 +140,16 @@ export class AppComponent implements IAppComponent {
   // Change the Status of a Task
   changeTaskStatus(taskData): void {
     const taskIndex: number = this.tasks.findIndex((task) => task.id === taskData.id);
-    this.tasks[taskIndex].status = taskData.newStatus;
+    const movedTask: ITask = Object.assign({}, this.tasks[taskIndex]);
+    movedTask.status = taskData.status;
+    api.editTask(movedTask,
+      (data) => {
+        this.tasks[taskIndex] = new Task(data);
+      },
+      (response) => {
+        this.showAlert('danger', 'Something Went Wrong. Please Try Again');
+      }
+    );
   }
   // Toggle Delete Modal Open / Close
   toggleDeleteModal(taskId?: number): void {

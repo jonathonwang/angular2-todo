@@ -1,7 +1,7 @@
 import { ITask } from './app.interface';
 
 export class Task implements ITask {
-  id: number;
+  id?: number;
   title: string;
   status: string;
   description: string;
@@ -10,7 +10,7 @@ export class Task implements ITask {
   createdAt: Date;
   updatedAt: Date;
   constructor(taskConstructor: ITask) {
-    this.id = taskConstructor.id;
+    if (taskConstructor.id) this.id = taskConstructor.id;
     this.title = taskConstructor.title;
     this.status = taskConstructor.status;
     this.description = taskConstructor.description;

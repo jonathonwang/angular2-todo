@@ -65875,7 +65875,6 @@
 	        this.title = 'Todo App';
 	        this.tasks = [];
 	        this.newTask = {
-	            id: 0,
 	            title: '',
 	            status: 'planned',
 	            description: '',
@@ -65917,7 +65916,6 @@
 	            var _this = this;
 	
 	            _app3.api.fetchTasks(function (tasks) {
-	                _this.newTask.id = tasks[tasks.length - 1].id + 1;
 	                var _iteratorNormalCompletion = true;
 	                var _didIteratorError = false;
 	                var _iteratorError = undefined;
@@ -65996,7 +65994,6 @@
 	        key: "resetNewTaskFields",
 	        value: function resetNewTaskFields() {
 	            this.newTask = {
-	                id: this.newTask.id + 1,
 	                title: '',
 	                status: 'planned',
 	                description: '',
@@ -66030,10 +66027,18 @@
 	    }, {
 	        key: "changeTaskStatus",
 	        value: function changeTaskStatus(taskData) {
+	            var _this3 = this;
+	
 	            var taskIndex = this.tasks.findIndex(function (task) {
 	                return task.id === taskData.id;
 	            });
-	            this.tasks[taskIndex].status = taskData.newStatus;
+	            var movedTask = Object.assign({}, this.tasks[taskIndex]);
+	            movedTask.status = taskData.status;
+	            _app3.api.editTask(movedTask, function (data) {
+	                _this3.tasks[taskIndex] = new _app2.Task(data);
+	            }, function (response) {
+	                _this3.showAlert('danger', 'Something Went Wrong. Please Try Again');
+	            });
 	        }
 	    }, {
 	        key: "toggleDeleteModal",
@@ -66046,18 +66051,18 @@
 	    }, {
 	        key: "removeTask",
 	        value: function removeTask(taskId) {
-	            var _this3 = this;
+	            var _this4 = this;
 	
 	            _app3.api.deleteTask(taskId, function (data) {
-	                var taskIndex = _this3.tasks.findIndex(function (task) {
+	                var taskIndex = _this4.tasks.findIndex(function (task) {
 	                    return task.id === taskId;
 	                });
-	                _this3.tasks.splice(taskIndex, 1);
-	                _this3.toggleDeleteModal();
-	                _this3.resetDeleteTaskId();
-	                _this3.showAlert('success', 'Task Successfully Deleted');
+	                _this4.tasks.splice(taskIndex, 1);
+	                _this4.toggleDeleteModal();
+	                _this4.resetDeleteTaskId();
+	                _this4.showAlert('success', 'Task Successfully Deleted');
 	            }, function (response) {
-	                _this3.showAlert('danger', 'Something Went Wrong, Please Try Again');
+	                _this4.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	            });
 	        }
 	    }, {
@@ -66087,18 +66092,18 @@
 	    }, {
 	        key: "submitEditTaskForm",
 	        value: function submitEditTaskForm(editTask) {
-	            var _this4 = this;
+	            var _this5 = this;
 	
 	            var editedTaskIndex = this.tasks.findIndex(function (task) {
 	                return task.id === editTask.id;
 	            });
 	            if (editedTaskIndex > -1) {
 	                _app3.api.editTask(editTask, function (data) {
-	                    _this4.tasks[editedTaskIndex] = new _app2.Task(editTask);
-	                    _this4.toggleEditModal();
-	                    _this4.resetEditTask();
+	                    _this5.tasks[editedTaskIndex] = new _app2.Task(editTask);
+	                    _this5.toggleEditModal();
+	                    _this5.resetEditTask();
 	                }, function (response) {
-	                    _this4.showAlert('danger', 'Something Went Wrong, Please Try Again');
+	                    _this5.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	                });
 	            } else {
 	                this.showAlert('danger', 'Something Went Wrong, Please Try Again');
@@ -66158,7 +66163,7 @@
 	    function Task(taskConstructor) {
 	        _classCallCheck(this, Task);
 	
-	        this.id = taskConstructor.id;
+	        if (taskConstructor.id) this.id = taskConstructor.id;
 	        this.title = taskConstructor.title;
 	        this.status = taskConstructor.status;
 	        this.description = taskConstructor.description;
@@ -66242,7 +66247,7 @@
 	    }, {
 	        key: "moveTask",
 	        value: function moveTask(taskId, newStatus) {
-	            this.taskWasMoved.emit({ id: taskId, newStatus: newStatus });
+	            this.taskWasMoved.emit({ id: taskId, status: newStatus });
 	            this.dropdownWasToggled.emit(taskId);
 	        }
 	    }, {
