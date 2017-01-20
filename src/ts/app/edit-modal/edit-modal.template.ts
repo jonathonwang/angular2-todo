@@ -19,6 +19,7 @@ export const template = `
                 <option value="planned">Planned</option>
                 <option value="in-progress">In-Progress</option>
                 <option value="completed">Completed</option>
+                <option value="archived">Archived</option>
               </select>
             </div>
             <div class="form-group">

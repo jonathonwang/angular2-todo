@@ -52,6 +52,8 @@ export class AppComponent implements IAppComponent {
   isDeleteModalOpen: boolean = false;
   isEditModalOpen: boolean = false;
 
+  visibleTasks: string = 'active';
+
   // Methods
   ngAfterViewInit() {
     this.injectRetrievedTasks();
@@ -229,5 +231,8 @@ export class AppComponent implements IAppComponent {
       createdAt: new Date(),
       updatedAt: new Date()
     } as ITask;
+  }
+  filterVisibleTasks(filterStatus: string): void {
+    this.visibleTasks = filterStatus;
   }
 }

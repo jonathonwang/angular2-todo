@@ -12,4 +12,9 @@ import { INavbar } from './navbar.interface';
 
 export class Navbar implements INavbar {
   @Input() title: string;
+  @Input() visibleTasks: string;
+  @Output() visibleTasksChanged = new EventEmitter();
+  filterVisibleTasks(filterState: string): void {
+    this.visibleTasksChanged.emit(filterState);
+  }
 }

@@ -43,6 +43,11 @@
           background-color: $success;
         }
       }
+      &.archived {
+        &:before {
+          background-color: lighten($secondary-font-color, 20%);
+        }
+      }
 
       span {
         font-size: 15px;
@@ -55,6 +60,9 @@
         }
         &.fa-dot-circle-o {
           color: $default;
+        }
+        &.fa-circle {
+          color: lighten($secondary-font-color, 20%);
         }
       }
     }

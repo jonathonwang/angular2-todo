@@ -5872,6 +5872,20 @@ body {
     color: #afb2b5;
     border: 1px solid #afb2b5;
     background-color: transparent; }
+  .btn-default.active {
+    border-color: #03a9f4;
+    color: #03a9f4;
+    background-color: transparent;
+    box-shadow: inset 0 3px 5px transparent; }
+    .btn-default.active:hover {
+      border-color: #0286c2;
+      color: #0286c2;
+      background-color: transparent; }
+    .btn-default.active:focus {
+      border-color: #03a9f4;
+      color: #03a9f4;
+      background-color: transparent;
+      outline: none; }
   .btn-default.btn-borderless {
     border: 0 solid transparent; }
 
@@ -5914,6 +5928,8 @@ body {
         background-color: #03a9f4; }
       .category .category-title h4.completed:before {
         background-color: #4caf50; }
+      .category .category-title h4.archived:before {
+        background-color: #878c90; }
       .category .category-title h4 span {
         font-size: 15px; }
         .category .category-title h4 span.fa-circle-o {
@@ -5922,6 +5938,8 @@ body {
           color: #4caf50; }
         .category .category-title h4 span.fa-dot-circle-o {
           color: #03a9f4; }
+        .category .category-title h4 span.fa-circle {
+          color: #878c90; }
   .category .category-status {
     position: absolute;
     left: 16px;

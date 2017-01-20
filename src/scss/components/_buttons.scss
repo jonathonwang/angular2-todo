@@ -74,6 +74,25 @@
     background-color: transparent;
   }
 
+  &.active {
+    border-color: $default;
+    color: $default;
+    background-color: transparent;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0);
+
+    &:hover {
+      border-color: darken($default, 10%);
+      color: darken($default, 10%);
+      background-color: transparent;
+    }
+    &:focus {
+      border-color: $default;
+      color: $default;
+      background-color: transparent;
+      outline: none;
+    }
+  }
+
   &.btn-borderless {
     border: 0 solid transparent;
   }

@@ -7,6 +7,7 @@ export const template = `
             <span *ngIf="status == 'completed'" class="fa fa-check-circle-o"></span>
             <span *ngIf="status == 'in-progress'"class="fa fa-dot-circle-o"></span>
             <span *ngIf="status == 'planned'" class="fa fa-circle-o"></span>
+            <span *ngIf="status == 'archived'" class="fa fa-circle"></span>
             {{status}}
           </h4>
         </div>
@@ -39,6 +40,8 @@ export const template = `
                     <li *ngIf="status == 'planned' || status == 'completed'"><a href="#" (click)="moveTask(task.id, 'in-progress')">Mark In-Progress</a></li>
                     <li *ngIf="status == 'in-progress'"><a href="#" (click)="moveTask(task.id, 'planned')">Mark Planned</a></li>
                     <li *ngIf="status == 'in-progress'"><a href="#" (click)="moveTask(task.id, 'completed')">Mark Completed</a></li>
+                    <li *ngIf="status == 'completed'"><a href="#" (click)="moveTask(task.id, 'archived')">Mark Archived</a></li>
+                    <li *ngIf="status == 'archived'"><a href="#" (click)="moveTask(task.id, 'completed')">Unarchive</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#" (click)="openEditModal(task.id)">Edit</a></li>
                     <li><a href="#" (click)="openDeleteModal(task.id)">Delete</a></li>
