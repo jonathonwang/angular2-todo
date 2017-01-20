@@ -124,6 +124,9 @@ export class AppComponent implements IAppComponent {
     this.alert.visible = true;
     this.alert.status = status;
     this.alert.message = message;
+    setTimeout(() => {
+      if (this.alert.visible === true) this.alert.visible = false;
+    }, 3000);
   }
   // Close Alert
   closeAlert(): void {
@@ -142,12 +145,14 @@ export class AppComponent implements IAppComponent {
     const taskIndex: number = this.tasks.findIndex((task) => task.id === taskData.id);
     const movedTask: ITask = Object.assign({}, this.tasks[taskIndex]);
     movedTask.status = taskData.status;
+    movedTask.updatedAt = new Date();
     api.editTask(movedTask,
       (data) => {
         this.tasks[taskIndex] = new Task(data);
+        this.showAlert('success', `Task Successfully Moved to ${data.status}.`);
       },
       (response) => {
-        this.showAlert('danger', 'Something Went Wrong. Please Try Again');
+        this.showAlert('danger', 'Something Went Wrong. Please Try Again.');
       }
     );
   }
@@ -195,12 +200,14 @@ export class AppComponent implements IAppComponent {
   // Replace Task in Task Array with Edited Task;
   submitEditTaskForm(editTask: ITask): void {
     const editedTaskIndex: number = this.tasks.findIndex((task) => task.id === editTask.id);
+    editTask.updatedAt = new Date();
     if (editedTaskIndex > -1) {
       api.editTask(editTask,
         (data) => {
           this.tasks[editedTaskIndex] = new Task(editTask);
           this.toggleEditModal();
           this.resetEditTask();
+          this.showAlert('success', 'Task Successfully Saved');
         },
         (response) => {
           this.showAlert('danger', 'Something Went Wrong, Please Try Again');

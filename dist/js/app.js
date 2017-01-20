@@ -66006,9 +66006,14 @@
 	    }, {
 	        key: "showAlert",
 	        value: function showAlert(status, message) {
+	            var _this3 = this;
+	
 	            this.alert.visible = true;
 	            this.alert.status = status;
 	            this.alert.message = message;
+	            setTimeout(function () {
+	                if (_this3.alert.visible === true) _this3.alert.visible = false;
+	            }, 3000);
 	        }
 	    }, {
 	        key: "closeAlert",
@@ -66027,17 +66032,19 @@
 	    }, {
 	        key: "changeTaskStatus",
 	        value: function changeTaskStatus(taskData) {
-	            var _this3 = this;
+	            var _this4 = this;
 	
 	            var taskIndex = this.tasks.findIndex(function (task) {
 	                return task.id === taskData.id;
 	            });
 	            var movedTask = Object.assign({}, this.tasks[taskIndex]);
 	            movedTask.status = taskData.status;
+	            movedTask.updatedAt = new Date();
 	            _app3.api.editTask(movedTask, function (data) {
-	                _this3.tasks[taskIndex] = new _app2.Task(data);
+	                _this4.tasks[taskIndex] = new _app2.Task(data);
+	                _this4.showAlert('success', "Task Successfully Moved to " + data.status + ".");
 	            }, function (response) {
-	                _this3.showAlert('danger', 'Something Went Wrong. Please Try Again');
+	                _this4.showAlert('danger', 'Something Went Wrong. Please Try Again.');
 	            });
 	        }
 	    }, {
@@ -66051,18 +66058,18 @@
 	    }, {
 	        key: "removeTask",
 	        value: function removeTask(taskId) {
-	            var _this4 = this;
+	            var _this5 = this;
 	
 	            _app3.api.deleteTask(taskId, function (data) {
-	                var taskIndex = _this4.tasks.findIndex(function (task) {
+	                var taskIndex = _this5.tasks.findIndex(function (task) {
 	                    return task.id === taskId;
 	                });
-	                _this4.tasks.splice(taskIndex, 1);
-	                _this4.toggleDeleteModal();
-	                _this4.resetDeleteTaskId();
-	                _this4.showAlert('success', 'Task Successfully Deleted');
+	                _this5.tasks.splice(taskIndex, 1);
+	                _this5.toggleDeleteModal();
+	                _this5.resetDeleteTaskId();
+	                _this5.showAlert('success', 'Task Successfully Deleted');
 	            }, function (response) {
-	                _this4.showAlert('danger', 'Something Went Wrong, Please Try Again');
+	                _this5.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	            });
 	        }
 	    }, {
@@ -66092,18 +66099,20 @@
 	    }, {
 	        key: "submitEditTaskForm",
 	        value: function submitEditTaskForm(editTask) {
-	            var _this5 = this;
+	            var _this6 = this;
 	
 	            var editedTaskIndex = this.tasks.findIndex(function (task) {
 	                return task.id === editTask.id;
 	            });
+	            editTask.updatedAt = new Date();
 	            if (editedTaskIndex > -1) {
 	                _app3.api.editTask(editTask, function (data) {
-	                    _this5.tasks[editedTaskIndex] = new _app2.Task(editTask);
-	                    _this5.toggleEditModal();
-	                    _this5.resetEditTask();
+	                    _this6.tasks[editedTaskIndex] = new _app2.Task(editTask);
+	                    _this6.toggleEditModal();
+	                    _this6.resetEditTask();
+	                    _this6.showAlert('success', 'Task Successfully Saved');
 	                }, function (response) {
-	                    _this5.showAlert('danger', 'Something Went Wrong, Please Try Again');
+	                    _this6.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	                });
 	            } else {
 	                this.showAlert('danger', 'Something Went Wrong, Please Try Again');
@@ -66444,7 +66453,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"alert alert-{{status}} alert-dismissible text-center\" [class.show]=\"visible\" role=\"alert\">\n    <button type=\"button\" class=\"close\" (click)=\"closeAlert($event)\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n    <span class=\"alert-message\"><strong class=\"text-capitalize\">{{status}}!</strong> {{message}}</span>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"alert alert-{{status}} alert-dismissible text-center\" [class.show]=\"visible\" role=\"alert\">\n    <button type=\"button\" class=\"close\" (click)=\"closeAlert($event)\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n    <span class=\"alert-message text-capitalize\"><strong>{{status}}!</strong> {{message}}</span>\n  </div>\n";
 	exports.default = template;
 
 /***/ },

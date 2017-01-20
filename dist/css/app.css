@@ -5932,6 +5932,7 @@ body {
     background-color: #fff; }
   .category .category-body {
     padding: 0 15px 55px;
+    min-height: 200px;
     max-height: calc(100vh - 162px);
     overflow-y: scroll; }
 
