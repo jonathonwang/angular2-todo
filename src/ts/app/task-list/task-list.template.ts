@@ -11,15 +11,18 @@ export const template = `
           </h4>
         </div>
         <div class="col-xs-6">
-          <button (click)="openModal(status)" class="btn btn-xs btn-rounded btn-create btn-default pull-right">
-          <span class="plus-text">+</span>
-          <span class="create-text"> Create Task</span>
+          <button (click)="openModal(status)" class="btn btn-xs btn-rounded btn-create btn-default pull-right {{status}}">
+            <span class="plus-text">+</span>
+            <span class="create-text"> Create Task</span>
           </button>
         </div>
       </div>
       <div class="category-body">
+
         <div class="task" *ngIf="tasks.length == 0">
-          <h5 class="text-center text-capitalize">No {{status}} Tasks Available</h5>
+          <div class="task-title">
+            <h5 class="text-center text-capitalize">No {{status}} Tasks Available</h5>
+          </div>
         </div>
 
 

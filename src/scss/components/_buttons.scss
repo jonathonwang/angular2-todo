@@ -29,6 +29,34 @@
       opacity: 1;
     }
   }
+
+  &.planned {
+    color: $warning;
+    border-color: $warning;
+
+    &:hover {
+      color: darken($warning, 10%);
+      border-color: darken($warning, 10%);
+    }
+  }
+  &.in-progress {
+    color: $default;
+    border-color: $default;
+
+    &:hover {
+      color: darken($default, 10%);
+      border-color: darken($default, 10%);
+    }
+  }
+  &.completed {
+    color: $success;
+    border-color: $success;
+
+    &:hover {
+      color: darken($success, 10%);
+      border-color: darken($success, 10%);
+    }
+  }
 }
 
 .btn-default {

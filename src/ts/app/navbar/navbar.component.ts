@@ -12,8 +12,4 @@ import { INavbar } from './navbar.interface';
 
 export class Navbar implements INavbar {
   @Input() title: string;
-  @Output() modalOpened = new EventEmitter();
-  modalWasOpened() {
-    this.modalOpened.emit();
-  }
 }

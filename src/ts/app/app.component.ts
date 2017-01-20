@@ -6,6 +6,8 @@ import { template } from './app.template';
 import { Task } from './app.classes';
 // Interface Imports
 import { IAppComponent, ITask } from './app.interface';
+// Api Import
+import { api } from './app.api';
 
 @Component({
   selector: 'app',
@@ -19,7 +21,7 @@ export class AppComponent implements IAppComponent {
   tasks: Array<Task> = [];
   // New Task State
   newTask: ITask = {
-    id: 4,
+    id: 0,
     title: '',
     status: 'planned',
     description: '',
@@ -50,7 +52,25 @@ export class AppComponent implements IAppComponent {
   isModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
   isEditModalOpen: boolean = false;
+
   // Methods
+  ngAfterViewInit() {
+    this.injectRetrievedTasks();
+  }
+  injectRetrievedTasks() {
+    api.fetchTasks(
+      (tasks) => {
+        this.newTask.id = tasks[tasks.length - 1].id + 1;
+        for (let task of tasks) {
+          const newTask = new Task(task);
+          this.tasks.push(newTask);
+        }
+      },
+      (data) => {
+        this.showAlert('danger', 'Unable to Retrieve Tasks. Please Try Refereshing This Page');
+      }
+    );
+  }
   // Filter Tasks By Status
   taskFilter(taskStatus: string): Array<Task> {
     return this.tasks.filter((task) => task.status === taskStatus);
@@ -73,11 +93,18 @@ export class AppComponent implements IAppComponent {
   // Create A New Task and push into Tasks Array
   createTask(taskData: ITask): void {
     if (taskData.title.length > 0) {
-      const newTask = new Task(taskData);
-      this.tasks.push(newTask);
-      this.resetNewTaskFields();
-      this.toggleTaskModal('');
-      this.showAlert('success', 'Task Successfully Created');
+      api.createTask(taskData,
+        (data) => {
+          const newTask = new Task(data);
+          this.tasks.push(newTask);
+          this.resetNewTaskFields();
+          this.toggleTaskModal('');
+          this.showAlert('success', 'Task Successfully Created');
+        },
+        (response) => {
+          this.showAlert('danger', 'Something Went Wrong. Please Try Again');
+        }
+      );
     } else {
       this.showAlert('danger', 'Task Title is Required');
     }
@@ -127,10 +154,18 @@ export class AppComponent implements IAppComponent {
   }
   // Remove Task from Task Array in State
   removeTask(taskId: number): void {
-    const taskIndex: number = this.tasks.findIndex((task) => task.id === taskId);
-    this.toggleDeleteModal();
-    this.tasks.splice(taskIndex, 1);
-    this.resetDeleteTaskId();
+    api.deleteTask(taskId,
+      (data) => {
+        const taskIndex: number = this.tasks.findIndex((task) => task.id === taskId);
+        this.tasks.splice(taskIndex, 1);
+        this.toggleDeleteModal();
+        this.resetDeleteTaskId();
+        this.showAlert('success', 'Task Successfully Deleted');
+      },
+      (response) => {
+        this.showAlert('danger', 'Something Went Wrong, Please Try Again');
+      }
+    );
   }
   // Reset Delete Task Id to original State
   resetDeleteTaskId() {
@@ -155,9 +190,16 @@ export class AppComponent implements IAppComponent {
   submitEditTaskForm(editTask: ITask): void {
     const editedTaskIndex: number = this.tasks.findIndex((task) => task.id === editTask.id);
     if (editedTaskIndex > -1) {
-      this.tasks[editedTaskIndex] = new Task(editTask);
-      this.toggleEditModal();
-      this.resetEditTask();
+      api.editTask(editTask,
+        (data) => {
+          this.tasks[editedTaskIndex] = new Task(editTask);
+          this.toggleEditModal();
+          this.resetEditTask();
+        },
+        (response) => {
+          this.showAlert('danger', 'Something Went Wrong, Please Try Again');
+        }
+      );
     } else {
       this.showAlert('danger', 'Something Went Wrong, Please Try Again');
     }

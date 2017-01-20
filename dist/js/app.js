@@ -65855,6 +65855,8 @@
 	
 	var _app2 = __webpack_require__(290);
 	
+	var _app3 = __webpack_require__(304);
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
@@ -65873,7 +65875,7 @@
 	        this.title = 'Todo App';
 	        this.tasks = [];
 	        this.newTask = {
-	            id: 4,
+	            id: 0,
 	            title: '',
 	            status: 'planned',
 	            description: '',
@@ -65905,6 +65907,47 @@
 	    }
 	
 	    _createClass(AppComponent, [{
+	        key: "ngAfterViewInit",
+	        value: function ngAfterViewInit() {
+	            this.injectRetrievedTasks();
+	        }
+	    }, {
+	        key: "injectRetrievedTasks",
+	        value: function injectRetrievedTasks() {
+	            var _this = this;
+	
+	            _app3.api.fetchTasks(function (tasks) {
+	                _this.newTask.id = tasks[tasks.length - 1].id + 1;
+	                var _iteratorNormalCompletion = true;
+	                var _didIteratorError = false;
+	                var _iteratorError = undefined;
+	
+	                try {
+	                    for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                        var task = _step.value;
+	
+	                        var newTask = new _app2.Task(task);
+	                        _this.tasks.push(newTask);
+	                    }
+	                } catch (err) {
+	                    _didIteratorError = true;
+	                    _iteratorError = err;
+	                } finally {
+	                    try {
+	                        if (!_iteratorNormalCompletion && _iterator.return) {
+	                            _iterator.return();
+	                        }
+	                    } finally {
+	                        if (_didIteratorError) {
+	                            throw _iteratorError;
+	                        }
+	                    }
+	                }
+	            }, function (data) {
+	                _this.showAlert('danger', 'Unable to Retrieve Tasks. Please Try Refereshing This Page');
+	            });
+	        }
+	    }, {
 	        key: "taskFilter",
 	        value: function taskFilter(taskStatus) {
 	            return this.tasks.filter(function (task) {
@@ -65933,12 +65976,18 @@
 	    }, {
 	        key: "createTask",
 	        value: function createTask(taskData) {
+	            var _this2 = this;
+	
 	            if (taskData.title.length > 0) {
-	                var newTask = new _app2.Task(taskData);
-	                this.tasks.push(newTask);
-	                this.resetNewTaskFields();
-	                this.toggleTaskModal('');
-	                this.showAlert('success', 'Task Successfully Created');
+	                _app3.api.createTask(taskData, function (data) {
+	                    var newTask = new _app2.Task(data);
+	                    _this2.tasks.push(newTask);
+	                    _this2.resetNewTaskFields();
+	                    _this2.toggleTaskModal('');
+	                    _this2.showAlert('success', 'Task Successfully Created');
+	                }, function (response) {
+	                    _this2.showAlert('danger', 'Something Went Wrong. Please Try Again');
+	                });
 	            } else {
 	                this.showAlert('danger', 'Task Title is Required');
 	            }
@@ -65997,12 +66046,19 @@
 	    }, {
 	        key: "removeTask",
 	        value: function removeTask(taskId) {
-	            var taskIndex = this.tasks.findIndex(function (task) {
-	                return task.id === taskId;
+	            var _this3 = this;
+	
+	            _app3.api.deleteTask(taskId, function (data) {
+	                var taskIndex = _this3.tasks.findIndex(function (task) {
+	                    return task.id === taskId;
+	                });
+	                _this3.tasks.splice(taskIndex, 1);
+	                _this3.toggleDeleteModal();
+	                _this3.resetDeleteTaskId();
+	                _this3.showAlert('success', 'Task Successfully Deleted');
+	            }, function (response) {
+	                _this3.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	            });
-	            this.toggleDeleteModal();
-	            this.tasks.splice(taskIndex, 1);
-	            this.resetDeleteTaskId();
 	        }
 	    }, {
 	        key: "resetDeleteTaskId",
@@ -66031,13 +66087,19 @@
 	    }, {
 	        key: "submitEditTaskForm",
 	        value: function submitEditTaskForm(editTask) {
+	            var _this4 = this;
+	
 	            var editedTaskIndex = this.tasks.findIndex(function (task) {
 	                return task.id === editTask.id;
 	            });
 	            if (editedTaskIndex > -1) {
-	                this.tasks[editedTaskIndex] = new _app2.Task(editTask);
-	                this.toggleEditModal();
-	                this.resetEditTask();
+	                _app3.api.editTask(editTask, function (data) {
+	                    _this4.tasks[editedTaskIndex] = new _app2.Task(editTask);
+	                    _this4.toggleEditModal();
+	                    _this4.resetEditTask();
+	                }, function (response) {
+	                    _this4.showAlert('danger', 'Something Went Wrong, Please Try Again');
+	                });
 	            } else {
 	                this.showAlert('danger', 'Something Went Wrong, Please Try Again');
 	            }
@@ -66222,7 +66284,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize {{status}}\">\n            <span *ngIf=\"status == 'completed'\" class=\"fa fa-check-circle-o\"></span>\n            <span *ngIf=\"status == 'in-progress'\"class=\"fa fa-dot-circle-o\"></span>\n            <span *ngIf=\"status == 'planned'\" class=\"fa fa-circle-o\"></span>\n            {{status}}\n          </h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right\">\n          <span class=\"plus-text\">+</span>\n          <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title {{status}}\">\n              <h5>\n                {{task.title}}\n                <div class=\"dropdown pull-right\" [class.open]=\"activeDropdown == task.id\">\n                  <button (click)=\"openDropdown(task.id)\" class=\"btn btn-default btn-borderless btn-xs pull-right dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                    <span class=\"fa fa-ellipsis-h fa-lg\"></span>\n                  </button>\n                  <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dropdownMenu1\">\n                    <li *ngIf=\"status == 'planned' || status == 'completed'\"><a href=\"#\" (click)=\"moveTask(task.id, 'in-progress')\">Mark In-Progress</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'planned')\">Mark Planned</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'completed')\">Mark Completed</a></li>\n                    <li role=\"separator\" class=\"divider\"></li>\n                    <li><a href=\"#\" (click)=\"openEditModal(task.id)\">Edit</a></li>\n                    <li><a href=\"#\" (click)=\"openDeleteModal(task.id)\">Delete</a></li>\n                  </ul>\n                </div>\n              </h5>\n\n\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h6 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge {{status}}\">{{tasks.length}}</span>\n            </h6>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h6>\n              Total Estimate:\n              <span class=\"badge {{status}}\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>\n            </h6>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"col-lg-4\">\n    <div class=\"well category {{status}}\">\n      <div class=\"category-title\">\n        <div class=\"col-xs-6\">\n          <h4 class=\"text-capitalize {{status}}\">\n            <span *ngIf=\"status == 'completed'\" class=\"fa fa-check-circle-o\"></span>\n            <span *ngIf=\"status == 'in-progress'\"class=\"fa fa-dot-circle-o\"></span>\n            <span *ngIf=\"status == 'planned'\" class=\"fa fa-circle-o\"></span>\n            {{status}}\n          </h4>\n        </div>\n        <div class=\"col-xs-6\">\n          <button (click)=\"openModal(status)\" class=\"btn btn-xs btn-rounded btn-create btn-default pull-right {{status}}\">\n            <span class=\"plus-text\">+</span>\n            <span class=\"create-text\"> Create Task</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"category-body\">\n\n        <div class=\"task\" *ngIf=\"tasks.length == 0\">\n          <div class=\"task-title\">\n            <h5 class=\"text-center text-capitalize\">No {{status}} Tasks Available</h5>\n          </div>\n        </div>\n\n\n        <ng-container *ngIf=\"tasks.length > 0\">\n          <div class=\"task\" *ngFor=\"let task of tasks\">\n            <div class=\"task-title {{status}}\">\n              <h5>\n                {{task.title}}\n                <div class=\"dropdown pull-right\" [class.open]=\"activeDropdown == task.id\">\n                  <button (click)=\"openDropdown(task.id)\" class=\"btn btn-default btn-borderless btn-xs pull-right dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                    <span class=\"fa fa-ellipsis-h fa-lg\"></span>\n                  </button>\n                  <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dropdownMenu1\">\n                    <li *ngIf=\"status == 'planned' || status == 'completed'\"><a href=\"#\" (click)=\"moveTask(task.id, 'in-progress')\">Mark In-Progress</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'planned')\">Mark Planned</a></li>\n                    <li *ngIf=\"status == 'in-progress'\"><a href=\"#\" (click)=\"moveTask(task.id, 'completed')\">Mark Completed</a></li>\n                    <li role=\"separator\" class=\"divider\"></li>\n                    <li><a href=\"#\" (click)=\"openEditModal(task.id)\">Edit</a></li>\n                    <li><a href=\"#\" (click)=\"openDeleteModal(task.id)\">Delete</a></li>\n                  </ul>\n                </div>\n              </h5>\n\n\n            </div>\n            <div class=\"task-body\">\n              <p>{{task.description}}</p>\n            </div>\n            <div class=\"task-footer\">\n              <div class=\"row\">\n                <div class=\"col-xs-6 text-left\">\n                  <p><small>Estimate: {{task.estimate}}{{task.estimate / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n                <div class=\"col-xs-6 text-right\">\n                  <p><small>Logged Work: {{task.timeSpent}}{{task.timeSpent / 60 > 1 ? 'h' : 'm'}}</small></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </ng-container>\n\n\n      </div>\n      <div class=\"category-status\">\n        <div class=\"row\">\n          <div class=\"col-xs-6 text-left\">\n            <h6 class=\"text-capitalize\">\n              {{status}} Tasks:\n              <span class=\"badge {{status}}\">{{tasks.length}}</span>\n            </h6>\n          </div>\n          <div class=\"col-xs-6 text-right\">\n            <h6>\n              Total Estimate:\n              <span class=\"badge {{status}}\">{{totalEstimate / 60}} hour{{totalEstimate / 60 > 1 ||  totalEstimate / 60 === 0 ? 's' : ''}}</span>\n            </h6>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ },
@@ -66391,8 +66453,6 @@
 	});
 	exports.Navbar = undefined;
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _core = __webpack_require__(262);
@@ -66413,24 +66473,10 @@
 	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	
-	var Navbar = function () {
-	    function Navbar() {
-	        _classCallCheck(this, Navbar);
-	
-	        this.modalOpened = new _core.EventEmitter();
-	    }
-	
-	    _createClass(Navbar, [{
-	        key: "modalWasOpened",
-	        value: function modalWasOpened() {
-	            this.modalOpened.emit();
-	        }
-	    }]);
-	
-	    return Navbar;
-	}();
+	var Navbar = function Navbar() {
+	    _classCallCheck(this, Navbar);
+	};
 	__decorate([(0, _core.Input)(), __metadata("design:type", String)], Navbar.prototype, "title", void 0);
-	__decorate([(0, _core.Output)(), __metadata("design:type", Object)], Navbar.prototype, "modalOpened", void 0);
 	exports.Navbar = Navbar = __decorate([(0, _core.Component)({
 	    selector: 'navbar',
 	    template: _navbar.template
@@ -66446,20 +66492,21 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"navbar row\">\n      <div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-6\">\n        <h1>{{title}}</h1>\n      </div>\n      <div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-6\">\n        <button class=\"btn btn-primary pull-right\" (click)=\"modalWasOpened()\">\n        Create Task\n        </button>\n      </div>\n    </div>\n  </div>\n";
+	var template = exports.template = "\n  <div class=\"container-fluid\">\n    <div class=\"navbar row\">\n      <div class=\"col-lg-12 col-md-12 col-sm-12 col-xs-12\">\n        <h1>{{title}}</h1>\n      </div>\n    </div>\n  </div>\n";
 	exports.default = template;
 
 /***/ },
 /* 299 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	var env = exports.env = {
-	    production: false
+	    production: false,
+	    serverUrl: 'http://localhost:3000'
 	};
 	exports.default = env;
 
@@ -66616,6 +66663,523 @@
 	});
 	var template = exports.template = "\n  <div class=\"modal fade\" [class.in]=\"isEditModalOpen\" tabindex=\"-1\" role=\"dialog\">\n    <div class=\"modal-dialog\" role=\"document\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <button type=\"button\" (click)=\"closeEditModalForm()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n          <h4 class=\"modal-title\">Edit Task</h4>\n        </div>\n        <div class=\"modal-body\">\n        <!-- Begin Form -->\n          <form (ngSubmit)=\"submitTaskForm($event)\" #createTaskForm=\"ngForm\">\n            <div class=\"form-group\">\n              <label for=\"title\">Title:</label>\n              <input name=\"title\" type=\"text\" [(ngModel)]=\"editTask.title\" class=\"form-control\" placeholder=\"Task Title\">\n            </div>\n            <div class=\"form-group\">\n              <label for=\"status\">Status:</label>\n              <select name=\"status\" [(ngModel)]=\"editTask.status\" required>\n                <option value=\"planned\">Planned</option>\n                <option value=\"in-progress\">In-Progress</option>\n                <option value=\"completed\">Completed</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n              <label for=\"description\">Description:</label>\n              <textarea name=\"description\" [(ngModel)]=\"editTask.description\" class=\"form-control\" placeholder=\"Description\" rows=\"5\"></textarea>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-lg-6 col-md-6 col-xs-12\">\n                <div class=\"form-group\">\n                  <label for=\"estimate\">Time Estimate:</label>\n                  <input name=\"estimate\" type=\"text\" [(ngModel)]=\"editTask.estimate\" class=\"form-control\" placeholder=\"Enter Minutes ex: 50\">\n                </div>\n              </div>\n              <div class=\"col-lg-6 col-md-6 col-xs-12\">\n                <div class=\"form-group\">\n                  <label for=\"timeSpent\">Time Spent:</label>\n                  <input name=\"timeSpent\" type=\"text\" [(ngModel)]=\"editTask.timeSpent\" class=\"form-control\" placeholder=\"Enter Minutes ex: 10\">\n                </div>\n              </div>\n            </div>\n          </form>\n        <!-- End Form -->\n        </div>\n        <div class=\"modal-footer\">\n          <button type=\"button\" (click)=\"closeEditModalForm()\" class=\"btn btn-default\">Close</button>\n          <button type=\"button\" (click)=\"submitEditModalForm(editTask)\" class=\"btn btn-primary\">Submit</button>\n        </div>\n      </div><!-- /.modal-content -->\n    </div><!-- /.modal-dialog -->\n  </div><!-- /.modal -->\n";
 	exports.default = template;
+
+/***/ },
+/* 304 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.api = undefined;
+	
+	__webpack_require__(305);
+	
+	var _env = __webpack_require__(299);
+	
+	var baseUrl = _env.env.serverUrl;
+	var headers = new Headers();
+	headers.set('Content-Type', 'application/json');
+	var checkResponse = function checkResponse(response, successCb, errorCb) {
+	    if (response.ok) {
+	        response.json().then(function (data) {
+	            return successCb(data);
+	        });
+	    } else {
+	        errorCb(response);
+	    }
+	};
+	var api = exports.api = {
+	    fetchTasks: function fetchTasks(successCb, errorCb) {
+	        fetch(baseUrl + '/tasks').then(function (response) {
+	            checkResponse(response, successCb, errorCb);
+	        });
+	    },
+	    createTask: function createTask(newTask, successCb, errorCb) {
+	        var newTaskJson = JSON.stringify(newTask);
+	        fetch(baseUrl + '/tasks', { method: 'POST', body: newTaskJson, headers: headers }).then(function (response) {
+	            checkResponse(response, successCb, errorCb);
+	        });
+	    },
+	    editTask: function editTask(_editTask, successCb, errorCb) {
+	        var editTaskJson = JSON.stringify(_editTask);
+	        fetch(baseUrl + '/tasks/' + _editTask.id, { method: 'PUT', body: editTaskJson, headers: headers }).then(function (response) {
+	            checkResponse(response, successCb, errorCb);
+	        });
+	    },
+	    deleteTask: function deleteTask(deleteTaskId, successCb, errorCb) {
+	        fetch(baseUrl + '/tasks/' + deleteTaskId, { method: 'DELETE' }).then(function (response) {
+	            checkResponse(response, successCb, errorCb);
+	        });
+	    }
+	};
+	exports.default = api;
+
+/***/ },
+/* 305 */
+/***/ function(module, exports) {
+
+	(function(self) {
+	  'use strict';
+	
+	  if (self.fetch) {
+	    return
+	  }
+	
+	  var support = {
+	    searchParams: 'URLSearchParams' in self,
+	    iterable: 'Symbol' in self && 'iterator' in Symbol,
+	    blob: 'FileReader' in self && 'Blob' in self && (function() {
+	      try {
+	        new Blob()
+	        return true
+	      } catch(e) {
+	        return false
+	      }
+	    })(),
+	    formData: 'FormData' in self,
+	    arrayBuffer: 'ArrayBuffer' in self
+	  }
+	
+	  if (support.arrayBuffer) {
+	    var viewClasses = [
+	      '[object Int8Array]',
+	      '[object Uint8Array]',
+	      '[object Uint8ClampedArray]',
+	      '[object Int16Array]',
+	      '[object Uint16Array]',
+	      '[object Int32Array]',
+	      '[object Uint32Array]',
+	      '[object Float32Array]',
+	      '[object Float64Array]'
+	    ]
+	
+	    var isDataView = function(obj) {
+	      return obj && DataView.prototype.isPrototypeOf(obj)
+	    }
+	
+	    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
+	      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+	    }
+	  }
+	
+	  function normalizeName(name) {
+	    if (typeof name !== 'string') {
+	      name = String(name)
+	    }
+	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+	      throw new TypeError('Invalid character in header field name')
+	    }
+	    return name.toLowerCase()
+	  }
+	
+	  function normalizeValue(value) {
+	    if (typeof value !== 'string') {
+	      value = String(value)
+	    }
+	    return value
+	  }
+	
+	  // Build a destructive iterator for the value list
+	  function iteratorFor(items) {
+	    var iterator = {
+	      next: function() {
+	        var value = items.shift()
+	        return {done: value === undefined, value: value}
+	      }
+	    }
+	
+	    if (support.iterable) {
+	      iterator[Symbol.iterator] = function() {
+	        return iterator
+	      }
+	    }
+	
+	    return iterator
+	  }
+	
+	  function Headers(headers) {
+	    this.map = {}
+	
+	    if (headers instanceof Headers) {
+	      headers.forEach(function(value, name) {
+	        this.append(name, value)
+	      }, this)
+	
+	    } else if (headers) {
+	      Object.getOwnPropertyNames(headers).forEach(function(name) {
+	        this.append(name, headers[name])
+	      }, this)
+	    }
+	  }
+	
+	  Headers.prototype.append = function(name, value) {
+	    name = normalizeName(name)
+	    value = normalizeValue(value)
+	    var oldValue = this.map[name]
+	    this.map[name] = oldValue ? oldValue+','+value : value
+	  }
+	
+	  Headers.prototype['delete'] = function(name) {
+	    delete this.map[normalizeName(name)]
+	  }
+	
+	  Headers.prototype.get = function(name) {
+	    name = normalizeName(name)
+	    return this.has(name) ? this.map[name] : null
+	  }
+	
+	  Headers.prototype.has = function(name) {
+	    return this.map.hasOwnProperty(normalizeName(name))
+	  }
+	
+	  Headers.prototype.set = function(name, value) {
+	    this.map[normalizeName(name)] = normalizeValue(value)
+	  }
+	
+	  Headers.prototype.forEach = function(callback, thisArg) {
+	    for (var name in this.map) {
+	      if (this.map.hasOwnProperty(name)) {
+	        callback.call(thisArg, this.map[name], name, this)
+	      }
+	    }
+	  }
+	
+	  Headers.prototype.keys = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push(name) })
+	    return iteratorFor(items)
+	  }
+	
+	  Headers.prototype.values = function() {
+	    var items = []
+	    this.forEach(function(value) { items.push(value) })
+	    return iteratorFor(items)
+	  }
+	
+	  Headers.prototype.entries = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push([name, value]) })
+	    return iteratorFor(items)
+	  }
+	
+	  if (support.iterable) {
+	    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+	  }
+	
+	  function consumed(body) {
+	    if (body.bodyUsed) {
+	      return Promise.reject(new TypeError('Already read'))
+	    }
+	    body.bodyUsed = true
+	  }
+	
+	  function fileReaderReady(reader) {
+	    return new Promise(function(resolve, reject) {
+	      reader.onload = function() {
+	        resolve(reader.result)
+	      }
+	      reader.onerror = function() {
+	        reject(reader.error)
+	      }
+	    })
+	  }
+	
+	  function readBlobAsArrayBuffer(blob) {
+	    var reader = new FileReader()
+	    var promise = fileReaderReady(reader)
+	    reader.readAsArrayBuffer(blob)
+	    return promise
+	  }
+	
+	  function readBlobAsText(blob) {
+	    var reader = new FileReader()
+	    var promise = fileReaderReady(reader)
+	    reader.readAsText(blob)
+	    return promise
+	  }
+	
+	  function readArrayBufferAsText(buf) {
+	    var view = new Uint8Array(buf)
+	    var chars = new Array(view.length)
+	
+	    for (var i = 0; i < view.length; i++) {
+	      chars[i] = String.fromCharCode(view[i])
+	    }
+	    return chars.join('')
+	  }
+	
+	  function bufferClone(buf) {
+	    if (buf.slice) {
+	      return buf.slice(0)
+	    } else {
+	      var view = new Uint8Array(buf.byteLength)
+	      view.set(new Uint8Array(buf))
+	      return view.buffer
+	    }
+	  }
+	
+	  function Body() {
+	    this.bodyUsed = false
+	
+	    this._initBody = function(body) {
+	      this._bodyInit = body
+	      if (!body) {
+	        this._bodyText = ''
+	      } else if (typeof body === 'string') {
+	        this._bodyText = body
+	      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+	        this._bodyBlob = body
+	      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+	        this._bodyFormData = body
+	      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	        this._bodyText = body.toString()
+	      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+	        this._bodyArrayBuffer = bufferClone(body.buffer)
+	        // IE 10-11 can't handle a DataView body.
+	        this._bodyInit = new Blob([this._bodyArrayBuffer])
+	      } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+	        this._bodyArrayBuffer = bufferClone(body)
+	      } else {
+	        throw new Error('unsupported BodyInit type')
+	      }
+	
+	      if (!this.headers.get('content-type')) {
+	        if (typeof body === 'string') {
+	          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+	        } else if (this._bodyBlob && this._bodyBlob.type) {
+	          this.headers.set('content-type', this._bodyBlob.type)
+	        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+	        }
+	      }
+	    }
+	
+	    if (support.blob) {
+	      this.blob = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+	
+	        if (this._bodyBlob) {
+	          return Promise.resolve(this._bodyBlob)
+	        } else if (this._bodyArrayBuffer) {
+	          return Promise.resolve(new Blob([this._bodyArrayBuffer]))
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as blob')
+	        } else {
+	          return Promise.resolve(new Blob([this._bodyText]))
+	        }
+	      }
+	
+	      this.arrayBuffer = function() {
+	        if (this._bodyArrayBuffer) {
+	          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+	        } else {
+	          return this.blob().then(readBlobAsArrayBuffer)
+	        }
+	      }
+	    }
+	
+	    this.text = function() {
+	      var rejected = consumed(this)
+	      if (rejected) {
+	        return rejected
+	      }
+	
+	      if (this._bodyBlob) {
+	        return readBlobAsText(this._bodyBlob)
+	      } else if (this._bodyArrayBuffer) {
+	        return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
+	      } else if (this._bodyFormData) {
+	        throw new Error('could not read FormData body as text')
+	      } else {
+	        return Promise.resolve(this._bodyText)
+	      }
+	    }
+	
+	    if (support.formData) {
+	      this.formData = function() {
+	        return this.text().then(decode)
+	      }
+	    }
+	
+	    this.json = function() {
+	      return this.text().then(JSON.parse)
+	    }
+	
+	    return this
+	  }
+	
+	  // HTTP methods whose capitalization should be normalized
+	  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+	
+	  function normalizeMethod(method) {
+	    var upcased = method.toUpperCase()
+	    return (methods.indexOf(upcased) > -1) ? upcased : method
+	  }
+	
+	  function Request(input, options) {
+	    options = options || {}
+	    var body = options.body
+	
+	    if (input instanceof Request) {
+	      if (input.bodyUsed) {
+	        throw new TypeError('Already read')
+	      }
+	      this.url = input.url
+	      this.credentials = input.credentials
+	      if (!options.headers) {
+	        this.headers = new Headers(input.headers)
+	      }
+	      this.method = input.method
+	      this.mode = input.mode
+	      if (!body && input._bodyInit != null) {
+	        body = input._bodyInit
+	        input.bodyUsed = true
+	      }
+	    } else {
+	      this.url = String(input)
+	    }
+	
+	    this.credentials = options.credentials || this.credentials || 'omit'
+	    if (options.headers || !this.headers) {
+	      this.headers = new Headers(options.headers)
+	    }
+	    this.method = normalizeMethod(options.method || this.method || 'GET')
+	    this.mode = options.mode || this.mode || null
+	    this.referrer = null
+	
+	    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+	      throw new TypeError('Body not allowed for GET or HEAD requests')
+	    }
+	    this._initBody(body)
+	  }
+	
+	  Request.prototype.clone = function() {
+	    return new Request(this, { body: this._bodyInit })
+	  }
+	
+	  function decode(body) {
+	    var form = new FormData()
+	    body.trim().split('&').forEach(function(bytes) {
+	      if (bytes) {
+	        var split = bytes.split('=')
+	        var name = split.shift().replace(/\+/g, ' ')
+	        var value = split.join('=').replace(/\+/g, ' ')
+	        form.append(decodeURIComponent(name), decodeURIComponent(value))
+	      }
+	    })
+	    return form
+	  }
+	
+	  function parseHeaders(rawHeaders) {
+	    var headers = new Headers()
+	    rawHeaders.split(/\r?\n/).forEach(function(line) {
+	      var parts = line.split(':')
+	      var key = parts.shift().trim()
+	      if (key) {
+	        var value = parts.join(':').trim()
+	        headers.append(key, value)
+	      }
+	    })
+	    return headers
+	  }
+	
+	  Body.call(Request.prototype)
+	
+	  function Response(bodyInit, options) {
+	    if (!options) {
+	      options = {}
+	    }
+	
+	    this.type = 'default'
+	    this.status = 'status' in options ? options.status : 200
+	    this.ok = this.status >= 200 && this.status < 300
+	    this.statusText = 'statusText' in options ? options.statusText : 'OK'
+	    this.headers = new Headers(options.headers)
+	    this.url = options.url || ''
+	    this._initBody(bodyInit)
+	  }
+	
+	  Body.call(Response.prototype)
+	
+	  Response.prototype.clone = function() {
+	    return new Response(this._bodyInit, {
+	      status: this.status,
+	      statusText: this.statusText,
+	      headers: new Headers(this.headers),
+	      url: this.url
+	    })
+	  }
+	
+	  Response.error = function() {
+	    var response = new Response(null, {status: 0, statusText: ''})
+	    response.type = 'error'
+	    return response
+	  }
+	
+	  var redirectStatuses = [301, 302, 303, 307, 308]
+	
+	  Response.redirect = function(url, status) {
+	    if (redirectStatuses.indexOf(status) === -1) {
+	      throw new RangeError('Invalid status code')
+	    }
+	
+	    return new Response(null, {status: status, headers: {location: url}})
+	  }
+	
+	  self.Headers = Headers
+	  self.Request = Request
+	  self.Response = Response
+	
+	  self.fetch = function(input, init) {
+	    return new Promise(function(resolve, reject) {
+	      var request = new Request(input, init)
+	      var xhr = new XMLHttpRequest()
+	
+	      xhr.onload = function() {
+	        var options = {
+	          status: xhr.status,
+	          statusText: xhr.statusText,
+	          headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+	        }
+	        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+	        var body = 'response' in xhr ? xhr.response : xhr.responseText
+	        resolve(new Response(body, options))
+	      }
+	
+	      xhr.onerror = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+	
+	      xhr.ontimeout = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+	
+	      xhr.open(request.method, request.url, true)
+	
+	      if (request.credentials === 'include') {
+	        xhr.withCredentials = true
+	      }
+	
+	      if ('responseType' in xhr && support.blob) {
+	        xhr.responseType = 'blob'
+	      }
+	
+	      request.headers.forEach(function(value, name) {
+	        xhr.setRequestHeader(name, value)
+	      })
+	
+	      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+	    })
+	  }
+	  self.fetch.polyfill = true
+	})(typeof self !== 'undefined' ? self : this);
+
 
 /***/ }
 /******/ ]);

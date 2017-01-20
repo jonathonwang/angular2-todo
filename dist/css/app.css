@@ -5843,6 +5843,24 @@ body {
     .btn-create:hover .create-text {
       width: auto;
       opacity: 1; }
+  .btn-create.planned {
+    color: #f44336;
+    border-color: #f44336; }
+    .btn-create.planned:hover {
+      color: #ea1c0d;
+      border-color: #ea1c0d; }
+  .btn-create.in-progress {
+    color: #03a9f4;
+    border-color: #03a9f4; }
+    .btn-create.in-progress:hover {
+      color: #0286c2;
+      border-color: #0286c2; }
+  .btn-create.completed {
+    color: #4caf50;
+    border-color: #4caf50; }
+    .btn-create.completed:hover {
+      color: #3d8b40;
+      border-color: #3d8b40; }
 
 .btn-default {
   color: #94999c;
