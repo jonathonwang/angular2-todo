@@ -81,7 +81,7 @@ export class AppComponent implements IAppComponent {
     this.tasks.filter((task) => task.status === taskStatus).map((task) => {
       total += task.estimate;
     });
-    return total;
+    return parseInt(total.toString(), 10);
   }
   // Toggle Task Create Modal Open / Closed
   toggleTaskModal(status?: string): void {

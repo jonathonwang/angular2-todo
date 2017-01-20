@@ -25,6 +25,7 @@ export interface IAppComponent {
   isModalOpen: boolean;
   isDeleteModalOpen: boolean;
   isEditModalOpen: boolean;
+  visibleTasks: string;
   // Methods
   // Filter Tasks By Status
   taskFilter(taskStatus: string): Array<ITask>;
@@ -58,4 +59,5 @@ export interface IAppComponent {
   submitEditTaskForm(editTask: Object): void;
   // Reset Edit Task to original State
   resetEditTask(): void;
+  filterVisibleTasks(filterStatus: string): void;
 }

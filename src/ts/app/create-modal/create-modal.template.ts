@@ -30,13 +30,13 @@ export const template = `
               <div class="col-lg-6 col-md-6 col-xs-12">
                 <div class="form-group">
                   <label for="estimate">Time Estimate: <small>(Minutes)</small></label>
-                  <input name="estimate" type="text" [(ngModel)]="newTask.estimate" class="form-control" placeholder="Enter Minutes ex: 50">
+                  <input name="estimate" type="number" [(ngModel)]="newTask.estimate" class="form-control" placeholder="Enter Minutes ex: 50">
                 </div>
               </div>
               <div class="col-lg-6 col-md-6 col-xs-12">
                 <div class="form-group">
                   <label for="timeSpent">Time Spent: <small>(Minutes)</small></label>
-                  <input name="timeSpent" type="text" [(ngModel)]="newTask.timeSpent" class="form-control" placeholder="Enter Minutes ex: 10">
+                  <input name="timeSpent" type="number" [(ngModel)]="newTask.timeSpent" class="form-control" placeholder="Enter Minutes ex: 10">
                 </div>
               </div>
             </div>
